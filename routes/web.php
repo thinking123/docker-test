@@ -11,6 +11,6 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
-});
+$router->get('/login', 'IndexController@login');
+
+$router->post('/login/google', 'IndexController@googleLogin');
