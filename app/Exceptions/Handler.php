@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Output;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -28,7 +29,7 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception  $e
+     * @param  \Exception $e
      * @throws \Exception
      * @return void
      */
@@ -40,12 +41,31 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $e
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Exception $e
      * @return \Illuminate\Http\Response
      */
     public function render($request, Exception $e)
     {
-        return parent::render($request, $e);
+        if (env('APP_DEBUG', false)) {
+            return parent::render($request, $e);
+        }
+
+        if ($this->shouldReport($e) && ($e instanceof Exception)) {
+            $this->alert($e);
+        }
+
+        return Output::error(trans('common.system_is_busy'));
+    }
+
+    /**
+     * Report a warning
+     *
+     * @param Exception $e
+     * @return null
+     */
+    public function alert(Exception $e)
+    {
+
     }
 }

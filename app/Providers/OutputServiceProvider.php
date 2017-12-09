@@ -3,8 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Services\Utils\Output;
 
-class AppServiceProvider extends ServiceProvider
+class OutputServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -13,11 +14,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
-    }
-
-    public function boot()
-    {
-        app('translator')->setLocale('en');
+        $this->app->singleton('output', function () {
+            return new Output();
+        });
     }
 }

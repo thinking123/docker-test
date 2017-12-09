@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Output;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 

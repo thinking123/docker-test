@@ -25,7 +25,9 @@ $app = new Laravel\Lumen\Application(
 
 $app->configure('app');
 
-// $app->withFacades();
+$app->withFacades(true, [
+    'App\Facades\Output' => 'Output',
+]);
 
 // $app->withEloquent();
 
@@ -80,9 +82,10 @@ $app->singleton(
 |
 */
 
-// $app->register(App\Providers\AppServiceProvider::class);
+$app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
+$app->register(App\Providers\OutputServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
