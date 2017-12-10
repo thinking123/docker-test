@@ -11,6 +11,9 @@
 |
 */
 
-$router->get('/login', 'IndexController@login');
+$router->group(['middleware' => 'cors'], function () use ($router) {
 
-$router->post('/login/google', 'IndexController@googleLogin');
+    $router->get('/login', 'IndexController@login');
+
+    $router->post('/login/google', 'IndexController@googleLogin');
+});
