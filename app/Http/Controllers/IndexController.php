@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Output;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\User;
 
 class IndexController extends Controller
 {
@@ -34,9 +35,14 @@ class IndexController extends Controller
         if (false === $payload) {
             return Output::error(trans('common.invalid_parameter_value', [
                 'param' => 'id_token'
-            ]), 1001, [], Response::HTTP_UNAUTHORIZED);
+            ]), 1001, [
+                'id_token' => $idToken
+            ], Response::HTTP_UNAUTHORIZED);
         }
 
-        dd($payload);
+        if (!User::newOrUpdateGoogleUser($payload['sub'], $payload['email'], $payload['name'], $payload['given_name'],
+            $payload['family_name'], $payload['picture'])) {
+            return Output::error(trans('common.system_is_busy'), 1002);
+        }
     }
 }
