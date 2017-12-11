@@ -32,9 +32,11 @@ class IndexController extends Controller
         $payload = $client->verifyIdToken($idToken);
 
         if (false === $payload) {
-            return Ouput::error(trans('common.invalid_parameter_value', [
+            return Output::error(trans('common.invalid_parameter_value', [
                 'param' => 'id_token'
             ]), 1001, [], Response::HTTP_UNAUTHORIZED);
         }
+
+        dd($payload);
     }
 }
