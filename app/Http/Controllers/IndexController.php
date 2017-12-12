@@ -15,7 +15,7 @@ class IndexController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function login()
+    public function index()
     {
         return view('login');
     }
@@ -25,7 +25,7 @@ class IndexController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function doLogin(Request $request)
+    public function login(Request $request)
     {
         $source = trim($request->input('source', ''));
 
