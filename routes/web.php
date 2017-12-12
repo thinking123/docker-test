@@ -18,6 +18,8 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
     $router->post('/login', 'IndexController@login');
 
     $router->group(['middleware' => ['auth']], function () use ($router) {
+        $router->get('/tokens', 'IndexController@getTokens');
+
         $router->post('/token/refresh', 'IndexController@refreshAccessToken');
     });
 });

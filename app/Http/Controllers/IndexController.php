@@ -112,8 +112,7 @@ class IndexController extends Controller
      */
     public function refreshAccessToken(Request $request)
     {
-        $refreshToken = $request->input('refresh_token', '');
-        $refreshToken = trim($refreshToken);
+        $refreshToken = trim($request->input('refresh_token', ''));
 
         if (empty($refreshToken)) {
             return Output::error(trans('common.invalid_parameter_value', [
@@ -135,5 +134,16 @@ class IndexController extends Controller
         ];
 
         return Output::ok($data);
+    }
+
+    /**
+     * refresh access token
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMyTokens(Request $request)
+    {
+        
     }
 }
