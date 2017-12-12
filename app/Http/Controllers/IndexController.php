@@ -86,7 +86,9 @@ class IndexController extends Controller
             return Output::error(trans('common.server_is_busy'), 10102, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $token = Token::genToken($user->id, $user->salt);
+        $agent = $request->header('user-agent', '');
+
+        $token = Token::genToken($user->id, $user->salt, $agent);
 
         if (false === $token) {
             return Output::error(trans('common.server_is_busy'), 10103, [], Response::HTTP_INTERNAL_SERVER_ERROR);

@@ -59,13 +59,15 @@ class Token extends Base
      *
      * @param int $userId
      * @param string $salt
+     * @param string $agent
      * @return Token|false
      */
-    public static function genToken($userId, $salt)
+    public static function genToken($userId, $salt, $agent = '')
     {
         $token = new static;
 
         $token->userId = $userId;
+        $token->agent = trim($agent);
         $token->refreshToken = static::genRefreshToken($userId, $salt);
         $token->accessToken = sha1($userId . uniqid() . $salt . $token->refreshToken);
         $token->createdAt = $token->updatedAt = date('Y-m-d H:i:s');
