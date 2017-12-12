@@ -36,10 +36,16 @@ class Token extends Base
     {
         $accessToken = sha1($userId . uniqid() . $salt . $refreshToken);
 
-        $affected = static::where('refreshToken', $refreshToken)->where('status', static::STATUS_NORMAL)->update([
-            'accessToken' => $accessToken,
-            'updatedAt'   => date('Y-m-d H:i:s')
-        ]);
+        $data = [
+            'accessToken'          => $accessToken,
+            'accessTokenExpiredAt' => date('Y-m-d H:i:s', time() + config('app.access_token_max_lifetime')),
+            'updatedAt'            => date('Y-m-d H:i:s')
+        ];
+
+        $affected = static::where('refreshToken', $refreshToken)
+            ->where('refreshTokenExpiredAt', '>', date('Y-m-d H:i:s'))
+            ->where('status', static::STATUS_NORMAL)
+            ->update($data);
 
         if ($affected <= 0) {
             return;
@@ -63,6 +69,8 @@ class Token extends Base
         $token->refreshToken = static::genRefreshToken($userId, $salt);
         $token->accessToken = sha1($userId . uniqid() . $salt . $token->refreshToken);
         $token->createdAt = $token->updatedAt = date('Y-m-d H:i:s');
+        $token->refreshTokenExpiredAt = date('Y-m-d H:i:s', time() + config('app.refresh_token_max_lifetime'));
+        $token->accessTokenExpiredAt = date('Y-m-d H:i:s', time() + config('app.access_token_max_lifetime'));
 
         return $token->save() ? $token : false;
     }
@@ -75,7 +83,8 @@ class Token extends Base
      */
     public static function getUserByAccessToken($accessToken)
     {
-        $token = static::where('accessToken', $accessToken)->where('status', static::STATUS_NORMAL)->first();
+        $token = static::where('accessToken', $accessToken)->where('accessTokenExpiredAt', '>',
+            date('Y-m-d H:i:s'))->where('status', static::STATUS_NORMAL)->first();
 
         if (!is_null($token)) {
             return User::find($token->userId);

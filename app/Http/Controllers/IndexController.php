@@ -93,8 +93,10 @@ class IndexController extends Controller
         }
 
         $data = [
-            'accessToken'  => $token->accessToken,
-            'refreshToken' => $token->refreshToken
+            'accessToken'           => $token->accessToken,
+            'refreshToken'          => $token->refreshToken,
+            'accessTokenExpiredAt'  => strtotime($token->accessTokenExpiredAt),
+            'refreshTokenExpiredAt' => strtotime($token->refreshTokenExpiredAt)
         ];
 
         return Output::ok($data);
@@ -126,7 +128,8 @@ class IndexController extends Controller
         }
 
         $data = [
-            'accessToken' => $token->accessToken
+            'accessToken'          => $token->accessToken,
+            'accessTokenExpiredAt' => strtotime($token->accessTokenExpiredAt)
         ];
 
         return Output::ok($data);
