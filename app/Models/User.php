@@ -18,7 +18,7 @@ class User extends Base
      * @param string $givenName
      * @param string $familyName
      * @param string $avatar
-     * @return bool
+     * @return User|false
      */
     public static function newOrUpdateGoogleUser($googleId, $email, $name, $givenName, $familyName, $avatar)
     {
@@ -29,26 +29,32 @@ class User extends Base
 
             if (!is_null($user)) {
                 $user->avatar = $avatar;
-                $user->updated = date('Y-m-d H:i:s');
+                $user->updatedAt = date('Y-m-d H:i:s');
                 $user->save();
             } else {
                 $user = new User();
+
                 $user->name = $name;
                 $user->givenName = $givenName;
                 $user->familyName = $familyName;
                 $user->avatar = $avatar;
                 $user->email = $email;
                 $user->googleId = $googleId;
+                $user->salt = sha1(microtime(true));
                 $user->createdAt = date('Y-m-d H:i:s');
+
+                if (!$user->save()) {
+                    throw new \Exception('insert google user data into table User failed');
+                }
             }
 
             DB::commit();
 
-            return true;
+            return $user;
         } catch (\Exception $e) {
-            Log::info($e->getMessage() . ' in file ' . $e->getFile() . ' on line ' . $e->getLine());
-
             DB::rollback();
+
+            static::log($e);
 
             return false;
         }

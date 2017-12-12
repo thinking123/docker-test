@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Exception;
 use Output;
+use App\Services\Utils\Log AS LogUtil;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -12,6 +14,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Handler extends ExceptionHandler
 {
+    use LogUtil;
+
     /**
      * A list of the exception types that should not be reported.
      *
@@ -53,9 +57,10 @@ class Handler extends ExceptionHandler
 
         if ($this->shouldReport($e) && ($e instanceof Exception)) {
             $this->alert($e);
+            static::log($e);
         }
 
-        return Output::error(trans('common.system_is_busy'));
+        return Output::error(trans('common.server_is_busy'), -1001, [], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**

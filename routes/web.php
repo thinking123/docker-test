@@ -15,5 +15,9 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
 
     $router->get('/login', 'IndexController@login');
 
-    $router->post('/login/google', 'IndexController@googleLogin');
+    $router->post('/login', 'IndexController@doLogin');
+
+    $router->group(['middleware' => ['auth']], function () use ($router) {
+        $router->post('/token/refresh', 'IndexController@refreshAccessToken');
+    });
 });

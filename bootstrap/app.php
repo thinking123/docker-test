@@ -30,7 +30,7 @@ $app->withFacades(true, [
     'App\Facades\Output' => 'Output',
 ]);
 
-// $app->withEloquent();
+$app->withEloquent();
 
 /*
 |--------------------------------------------------------------------------
