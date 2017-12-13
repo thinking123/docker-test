@@ -24,5 +24,7 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
         $router->put('/token', 'IndexController@refreshAccessToken');
 
         $router->delete('/token/{id:[0-9a-z]+}', 'IndexController@deleteAccessToken');
+
+        $router->get('/profile', 'UserController@getProfile');
     });
 });
