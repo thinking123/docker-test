@@ -23,11 +23,11 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
-$app->configure('app');
 $app->configure('cors');
 
 $app->withFacades(true, [
-    'App\Facades\Output' => 'Output',
+    'App\Facades\Output'               => 'Output',
+    'Illuminate\Support\Facades\Redis' => 'Redis',
 ]);
 
 $app->withEloquent();
@@ -89,6 +89,7 @@ $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(App\Providers\OutputServiceProvider::class);
 $app->register(Barryvdh\Cors\ServiceProvider::class);
+$app->register(Illuminate\Redis\RedisServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
