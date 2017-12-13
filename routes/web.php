@@ -15,11 +15,14 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
 
     $router->get('/', 'IndexController@index');
 
-    $router->post('/login', 'IndexController@login');
+    $router->post('/token', 'IndexController@login');
 
     $router->group(['middleware' => ['auth']], function () use ($router) {
+
         $router->get('/tokens', 'IndexController@getTokens');
 
-        $router->post('/token/refresh', 'IndexController@refreshAccessToken');
+        $router->put('/token', 'IndexController@refreshAccessToken');
+
+        $router->delete('/token/{id:[0-9a-z]+}', 'IndexController@deleteAccessToken');
     });
 });

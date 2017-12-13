@@ -15,7 +15,7 @@ class Output
      * @param int $options
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function ok(array $data, $status = Response::HTTP_OK, array $headers = [], $options = 0)
+    public static function ok(array $data = [], $status = Response::HTTP_OK, array $headers = [], $options = 0)
     {
         $data = [
             'status' => true,

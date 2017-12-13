@@ -23,6 +23,7 @@ class IndexController extends Controller
     /**
      * Login
      *
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
@@ -88,10 +89,11 @@ class IndexController extends Controller
 
         $agent = $request->header('user-agent', '');
 
-        $token = Token::genToken($user->id, $user->salt, $agent);
-
-        if (false === $token) {
-            return Output::error(trans('common.server_is_busy'), 10103, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        try {
+            $token = Token::genToken($user->id, $user->salt, $agent);
+        } catch (\Exception $e) {
+            static::log($e);
+            return Output::error($e->getMessage(), 10103, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         $data = [
@@ -142,8 +144,41 @@ class IndexController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getMyTokens(Request $request)
+    public function getTokens(Request $request)
     {
-        
+        $tokens = Token::getUserTokens($request->user()->id);
+
+        $list = [];
+
+        foreach ($tokens as $token) {
+            $list[] = [
+                'token'     => $token->accessToken,
+                'agent'     => $token->agent,
+                'createdAt' => strtotime($token->createdAt),
+                'expiredAt' => strtotime($token->accessTokenExpiredAt)
+            ];
+        }
+
+        return Output::ok([
+            'tokens' => $list
+        ]);
+    }
+
+    /**
+     * 删除一个 token
+     *
+     * @param Request $request
+     * @param $accessToken
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteAccessToken(Request $request, $accessToken)
+    {
+        $deleted = Token::deleteToken($request->user()->id, $accessToken);
+
+        if ($deleted < 1) {
+            return Output::error(trans('common.operation_failed'));
+        }
+
+        return Output::ok();
     }
 }

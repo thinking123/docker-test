@@ -60,10 +60,15 @@ class Token extends Base
      * @param int $userId
      * @param string $salt
      * @param string $agent
-     * @return Token|false
+     * @throws \Exception
+     * @return Token
      */
     public static function genToken($userId, $salt, $agent = '')
     {
+        if (config('app.token_limit') > 0 && static::countUserTokens($userId) >= config('app.token_limit')) {
+            throw new \Exception(trans('common.token_limit_reached'));
+        }
+
         $token = new static;
 
         $token->userId = $userId;
@@ -74,7 +79,13 @@ class Token extends Base
         $token->refreshTokenExpiredAt = date('Y-m-d H:i:s', time() + config('app.refresh_token_max_lifetime'));
         $token->accessTokenExpiredAt = date('Y-m-d H:i:s', time() + config('app.access_token_max_lifetime'));
 
-        return $token->save() ? $token : false;
+        $saved = $token->save();
+
+        if (!$saved) {
+            throw new \Exception(trans('common.server_is_busy'));
+        }
+
+        return $token;
     }
 
     /**
@@ -91,5 +102,60 @@ class Token extends Base
         if (!is_null($token)) {
             return User::find($token->userId);
         }
+    }
+
+    /**
+     * 获取用户已有 token 数量
+     *
+     * @param int $userId
+     * @return int
+     */
+    public static function countUserTokens($userId)
+    {
+        $count = static::where('userId', $userId)
+            ->where('refreshTokenExpiredAt', '>', date('Y-m-d H:i:s'))
+            ->where('status', static::STATUS_NORMAL)
+            ->count();
+
+        return $count;
+    }
+
+    /**
+     * 获取用户全部活动的 token
+     *
+     * @param int $userId
+     * @return array
+     */
+    public static function getUserTokens($userId)
+    {
+        $tokens = static::where('userId', $userId)
+            ->where('refreshTokenExpiredAt', '>', date('Y-m-d H:i:s'))
+            ->where('status', static::STATUS_NORMAL)
+            ->get();
+
+        return $tokens;
+    }
+
+    /**
+     * 删除一个 token
+     *
+     * @param int $userId
+     * @param int $accessToken
+     * @return mixed
+     */
+    public static function deleteToken($userId, $accessToken)
+    {
+        $data = [
+            'status'    => static::STATUS_DELETED,
+            'updatedAt' => date('Y-m-d H:i:s')
+        ];
+
+        $affected = static::where('userId', $userId)
+            ->where('accessToken', $accessToken)
+            ->where('accessTokenExpiredAt', '>', date('Y-m-d H:i:s'))
+            ->where('status', static::STATUS_NORMAL)
+            ->update($data);
+
+        return $affected;
     }
 }
