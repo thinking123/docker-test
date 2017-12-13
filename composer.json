@@ -13,7 +13,8 @@
     "laravel/lumen-framework": "5.5.*",
     "vlucas/phpdotenv": "~2.2",
     "google/apiclient": "~2.2",
-    "barryvdh/laravel-cors": "0.10.*"
+    "barryvdh/laravel-cors": "0.10.*",
+    "illuminate/redis": "~5.5"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",
