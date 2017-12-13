@@ -9,7 +9,7 @@ use App\Models\User;
 class UserController extends Controller
 {
     /**
-     * refresh access token
+     * Get user's profile info
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
