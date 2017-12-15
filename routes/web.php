@@ -26,5 +26,7 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
         $router->get('/profile', 'UserController@getProfile');
 
         $router->get('/devices', 'UserController@getDevices');
+
+        $router->get('/files', 'FileController@getFiles');
     });
 });

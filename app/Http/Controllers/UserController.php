@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Output;
+use Log;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Token;
@@ -20,6 +21,11 @@ class UserController extends Controller
         $user = User::getBasicProfile($request->user()->id);
 
         if (is_null($user)) {
+
+            Log::info(trans('common.user_not_found'), [
+                'userId' => $request->user()->id
+            ]);
+
             return Output::error(trans('common.user_not_found'), 20000);
         }
 
