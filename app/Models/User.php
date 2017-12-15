@@ -59,4 +59,26 @@ class User extends Base
             return false;
         }
     }
+
+    /**
+     * 获取用户基本资料
+     *
+     * @param int $userId
+     * @return array|null
+     */
+    public static function getBasicProfile($userId)
+    {
+        $user = static::where('id', $userId)->first()->toArray();
+
+        if (is_null($user)) {
+            return null;
+        }
+
+        unset($user['id'], $user['googleId'], $user['salt']);
+
+        $user['createdAt'] = strtotime($user['createdAt']);
+        $user['updatedAt'] = strtotime($user['updatedAt']);
+
+        return $user;
+    }
 }
