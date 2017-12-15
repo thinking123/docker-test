@@ -18,7 +18,10 @@ class UserController extends Controller
     {
         $user = User::where('id', $request->user()->id)->first()->toArray();
 
-        unset($user['googleId'], $user['salt']);
+        unset($user['id'], $user['googleId'], $user['salt']);
+
+        $user['createdAt'] = strtotime($user['createdAt']);
+        $user['updatedAt'] = strtotime($user['updatedAt']);
 
         return Output::ok($user);
     }
