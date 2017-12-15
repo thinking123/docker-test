@@ -19,12 +19,12 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
 
     $router->group(['middleware' => ['auth']], function () use ($router) {
 
-        $router->get('/tokens', 'IndexController@getTokens');
-
         $router->put('/token', 'IndexController@refreshAccessToken');
 
         $router->delete('/token/{id:[0-9a-z]+}', 'IndexController@deleteAccessToken');
 
         $router->get('/profile', 'UserController@getProfile');
+
+        $router->get('/devices', 'UserController@getDevices');
     });
 });

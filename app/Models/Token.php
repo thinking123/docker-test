@@ -60,10 +60,11 @@ class Token extends Base
      * @param int $userId
      * @param string $salt
      * @param string $agent
+     * @param string $ip
      * @throws \Exception
      * @return Token
      */
-    public static function genToken($userId, $salt, $agent = '')
+    public static function genToken($userId, $salt, $agent, $ip)
     {
         if (config('app.token_limit') > 0 && static::countUserTokens($userId) >= config('app.token_limit')) {
             throw new \Exception(trans('common.token_limit_reached'));
@@ -73,6 +74,7 @@ class Token extends Base
 
         $token->userId = $userId;
         $token->agent = trim($agent);
+        $token->ip = $ip;
         $token->refreshToken = static::genRefreshToken($userId, $salt);
         $token->accessToken = sha1($userId . uniqid() . $salt . $token->refreshToken);
         $token->createdAt = $token->updatedAt = date('Y-m-d H:i:s');

@@ -81,7 +81,7 @@ class IndexController extends Controller
         }
 
         $user = User::newOrUpdateGoogleUser($payload['sub'], $payload['email'], $payload['name'],
-            $payload['given_name'], $payload['family_name'], $payload['picture']);
+            $payload['given_name'], $payload['family_name'], $payload['picture'], $request->getClientIp());
 
         if (false === $user) {
             return Output::error(trans('common.server_is_busy'), 10102, [], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -90,7 +90,7 @@ class IndexController extends Controller
         $agent = $request->header('user-agent', '');
 
         try {
-            $token = Token::genToken($user->id, $user->salt, $agent);
+            $token = Token::genToken($user->id, $user->salt, $agent, $request->getClientIp());
         } catch (\Exception $e) {
             static::log($e);
             return Output::error($e->getMessage(), 10103, [], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -136,32 +136,6 @@ class IndexController extends Controller
         ];
 
         return Output::ok($data);
-    }
-
-    /**
-     * refresh access token
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getTokens(Request $request)
-    {
-        $tokens = Token::getUserTokens($request->user()->id);
-
-        $list = [];
-
-        foreach ($tokens as $token) {
-            $list[] = [
-                'token'     => $token->accessToken,
-                'agent'     => $token->agent,
-                'createdAt' => strtotime($token->createdAt),
-                'expiredAt' => strtotime($token->accessTokenExpiredAt)
-            ];
-        }
-
-        return Output::ok([
-            'tokens' => $list
-        ]);
     }
 
     /**
