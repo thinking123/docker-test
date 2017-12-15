@@ -32,6 +32,14 @@ class File extends Base
 
         $files = $builder->limit($limit)->get()->toArray();
 
+        foreach ($files as &$file) {
+            $file['access'] = $file['access'] == 1 ? 'PUBLIC' : 'PRIVATE';
+            $file['createdAt'] = strtotime($file['createdAt']);
+            $file['updatedAt'] = is_null($file['updatedAt']) ? null : strtotime($file['updatedAt']);
+
+            unset($file['status']);
+        }
+
         return $files;
     }
 }
