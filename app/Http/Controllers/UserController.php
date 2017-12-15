@@ -16,12 +16,11 @@ class UserController extends Controller
      */
     public function getProfile(Request $request)
     {
-        $user = User::where('id', $request->user()->id)->first()->toArray();
+        $user = User::getBasicProfile($request->user()->id);
 
-        unset($user['id'], $user['googleId'], $user['salt']);
-
-        $user['createdAt'] = strtotime($user['createdAt']);
-        $user['updatedAt'] = strtotime($user['updatedAt']);
+        if (is_null($user)) {
+            return Output::error(trans('common.user_not_found'), 20000);
+        }
 
         return Output::ok($user);
     }
