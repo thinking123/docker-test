@@ -10,4 +10,5 @@ return [
     'file_not_found'          => 'File not found',
     'invalid_file_name'       => 'Invalid file name',
     'bad_request'             => 'Bad request',
+    'illegal_operation'       => 'Illegal operation',
 ];

@@ -34,5 +34,7 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
         $router->put('/file/{id:[0-9]+}', 'FileController@updateFile');
 
         $router->get('/file/{id:[0-9]+}', 'FileController@getFile');
+
+        $router->delete('/file/{id:[0-9]+}', 'FileController@deleteFile');
     });
 });

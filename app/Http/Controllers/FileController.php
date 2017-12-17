@@ -77,6 +77,8 @@ class FileController extends Controller
             'userId'    => $file->userId,
             'teamId'    => $file->teamId,
             'access'    => $file->access == 1 ? 'PUBLIC' : 'PRIVATE',
+            'editable'  => $file->userId == $request->user()->id,
+            'deletable' => $file->userId == $request->user()->id,
             'createdAt' => strtotime($file->createdAt),
             'updatedAt' => is_null($file->updatedAt) ? null : strtotime($file->updatedAt)
         ];
@@ -93,18 +95,22 @@ class FileController extends Controller
      */
     public function updateFile(Request $request, $id)
     {
-        $file = File::where('id', $id)->where('userId', $request->user()->id)->where('status',
+        $file = File::where('id', $id)->where('status',
             File::STATUS_NORMAL)->first();
 
         if (is_null($file)) {
             return Output::error(trans('common.file_not_found'), 30100, [], Response::HTTP_BAD_REQUEST);
         }
 
+        if ($file->userId != $request->user()->id) {
+            return Output::error(trans('common.illegal_operation'), 30101, [], Response::HTTP_BAD_REQUEST);
+        }
+
         $name = trim($request->input('name', ''));
         $public = trim($request->input('public', ''));
 
         if ($name == '' && $public == '') {
-            return Output::error(trans('common.bad_request'), 30101, [], Response::HTTP_BAD_REQUEST);
+            return Output::error(trans('common.bad_request'), 30102, [], Response::HTTP_BAD_REQUEST);
         }
 
         $data = [
@@ -127,14 +133,14 @@ class FileController extends Controller
                 ->update($data);
         } catch (\Exception $e) {
             static::log($e);
-            return Output::error(trans('common.server_is_busy'), 30102, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Output::error(trans('common.server_is_busy'), 30103, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         if ($affected > 0) {
             return Output::ok();
         }
 
-        return Output::error(trans('common.operation_failed'), 30103);
+        return Output::error(trans('common.operation_failed'), 30104);
     }
 
     /**
@@ -169,5 +175,45 @@ class FileController extends Controller
         ];
 
         return Output::ok($file);
+    }
+
+    /**
+     * 删除一个文件
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteFile(Request $request, $id)
+    {
+        $file = File::where('id', $id)->where('status', File::STATUS_NORMAL)->first();
+
+        if (is_null($file)) {
+            return Output::error(trans('common.file_not_found'), 30300, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($file->userId !== $request->user()->id) {
+            return Output::error(trans('common.illegal_operation'), 30301, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        $data = [
+            'status'    => File::STATUS_DELETED,
+            'updatedAt' => date('Y-m-d H:i:s')
+        ];
+
+        try {
+            $affected = File::where('id', $id)
+                ->where('userId', $request->user()->id)
+                ->where('status', File::STATUS_NORMAL)->update($data);
+        } catch (\Exception $e) {
+            static::log($e);
+            return Output::error(trans('common.server_is_busy'), 30302, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        if ($affected > 0) {
+            return Output::ok();
+        }
+
+        return Output::error(trans('common.operation_failed'), 30303);
     }
 }
