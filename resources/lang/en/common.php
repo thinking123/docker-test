@@ -7,5 +7,7 @@ return [
     'operation_failed'        => 'Operation failed',
     'token_limit_reached'     => 'You have reached the maximum number of tokens',
     'user_not_found'          => 'User not found',
+    'file_not_found'          => 'File not found',
     'invalid_file_name'       => 'Invalid file name',
+    'bad_request'             => 'Bad request',
 ];

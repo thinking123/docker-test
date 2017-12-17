@@ -61,7 +61,7 @@ class File extends Base
         $file->name = $name;
         $file->userId = $userId;
         $file->teamId = $teamId ? $teamId : null;
-        $file->access = $access;
+        $file->access = "{$access}";
         $file->createdAt = !is_null($createdAt) ? $createdAt : date('Y-m-d H:i:s');
 
         $saved = $file->save();

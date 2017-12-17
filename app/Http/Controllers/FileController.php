@@ -32,7 +32,7 @@ class FileController extends Controller
     }
 
     /**
-     * 获取用户全部文件
+     * 新建文件
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -82,5 +82,58 @@ class FileController extends Controller
         ];
 
         return Output::ok($file);
+    }
+
+    /**
+     * 更新文件
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateFile(Request $request, $id)
+    {
+        $file = File::where('id', $id)->where('userId', $request->user()->id)->where('status',
+            File::STATUS_NORMAL)->first();
+
+        if (is_null($file)) {
+            return Output::error(trans('common.file_not_found'), 30100, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        $name = trim($request->input('name', ''));
+        $public = trim($request->input('public', ''));
+
+        if ($name == '' && $public == '') {
+            return Output::error(trans('common.bad_request'), 30101, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        $data = [
+            'updatedAt' => date('Y-m-d H:i:s')
+        ];
+
+        if ('' !== $name) {
+            $data['name'] = $name;
+        }
+
+        if ('' !== $public) {
+            $public = intval(boolval($public));
+            $data['access'] = "{$public}";
+        }
+
+        try {
+            $affected = File::where('id', $id)
+                ->where('userId', $request->user()->id)
+                ->where('status', File::STATUS_NORMAL)
+                ->update($data);
+        } catch (\Exception $e) {
+            static::log($e);
+            return Output::error(trans('common.server_is_busy'), 30102, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        if ($affected > 0) {
+            return Output::ok();
+        }
+
+        return Output::error(trans('common.operation_failed'), 30103);
     }
 }
