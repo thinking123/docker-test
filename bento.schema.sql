@@ -11,7 +11,7 @@
  Target Server Version : 50720
  File Encoding         : utf-8
 
- Date: 12/15/2017 22:26:17 PM
+ Date: 12/17/2017 23:25:11 PM
 */
 
 SET NAMES utf8mb4;
@@ -28,12 +28,43 @@ CREATE TABLE `File` (
   `teamId` int(11) unsigned DEFAULT NULL COMMENT '用户组ID',
   `access` enum('0','1') NOT NULL DEFAULT '0' COMMENT '文件访问权限(0:私有1:公共)',
   `status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '文件状态(0:已删除1:正常)',
-  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updatedAt` timestamp NULL DEFAULT NULL COMMENT '最后修改时间',
   PRIMARY KEY (`id`),
   KEY `idx_userId` (`userId`),
   KEY `idx_teamId` (`teamId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Table structure for `Team`
+-- ----------------------------
+DROP TABLE IF EXISTS `Team`;
+CREATE TABLE `Team` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL COMMENT '组名称',
+  `ownerId` int(10) unsigned NOT NULL COMMENT '所有者ID',
+  `createdBy` int(10) unsigned NOT NULL COMMENT '创建者ID',
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updatedAt` timestamp NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_ownerId` (`ownerId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Table structure for `TeamUser`
+-- ----------------------------
+DROP TABLE IF EXISTS `TeamUser`;
+CREATE TABLE `TeamUser` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `userId` int(10) unsigned NOT NULL COMMENT '用户ID',
+  `teamId` int(10) unsigned NOT NULL COMMENT '组ID',
+  `status` enum('0','1') DEFAULT '1' COMMENT '状态(0:已解除;1-存续中)',
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updatedAt` timestamp NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_userId` (`userId`),
+  KEY `idx_teamId` (`teamId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `Token`
