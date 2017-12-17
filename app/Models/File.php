@@ -42,4 +42,32 @@ class File extends Base
 
         return $files;
     }
+
+    /**
+     * 新建一个文件
+     *
+     * @param string $name
+     * @param int $userId
+     * @param int|null $teamId
+     * @param string $access
+     * @param string|null $createdAt
+     * @throws \Exception
+     * @return File|null
+     */
+    public static function createFile($name, $userId, $teamId = null, $access = File::ACCESS_PUBLIC, $createdAt = null)
+    {
+        $file = new static;
+
+        $file->name = $name;
+        $file->userId = $userId;
+        $file->teamId = $teamId ? $teamId : null;
+        $file->access = $access;
+        $file->createdAt = !is_null($createdAt) ? $createdAt : date('Y-m-d H:i:s');
+
+        $saved = $file->save();
+
+        if ($saved) {
+            return $file;
+        }
+    }
 }
