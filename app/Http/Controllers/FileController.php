@@ -77,7 +77,6 @@ class FileController extends Controller
             'userId'    => $file->userId,
             'teamId'    => $file->teamId,
             'access'    => $file->access == 1 ? 'PUBLIC' : 'PRIVATE',
-            'layers'    => [],
             'createdAt' => strtotime($file->createdAt),
             'updatedAt' => is_null($file->updatedAt) ? null : strtotime($file->updatedAt)
         ];
