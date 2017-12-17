@@ -36,5 +36,7 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
         $router->get('/file/{id:[0-9]+}', 'FileController@getFile');
 
         $router->delete('/file/{id:[0-9]+}', 'FileController@deleteFile');
+
+        $router->post('/team', 'TeamController@createTeam');
     });
 });
