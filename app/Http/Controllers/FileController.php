@@ -136,4 +136,38 @@ class FileController extends Controller
 
         return Output::error(trans('common.operation_failed'), 30103);
     }
+
+    /**
+     * 获取一个文件
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getFile(Request $request, $id)
+    {
+        $file = File::where('id', $id)->where('status', File::STATUS_NORMAL)->first();
+
+        if (is_null($file)) {
+            return Output::error(trans('common.file_not_found'), 30200, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($file->userId !== $request->user()->id && $file->access != File::ACCESS_PUBLIC) {
+            return Output::error(trans('common.file_not_found'), 30201, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        $file = [
+            'id'        => $file->id,
+            'name'      => $file->name,
+            'userId'    => $file->userId,
+            'teamId'    => $file->teamId,
+            'access'    => $file->access == 1 ? 'PUBLIC' : 'PRIVATE',
+            'editable'  => $file->userId == $request->user()->id,
+            'deletable' => $file->userId == $request->user()->id,
+            'createdAt' => strtotime($file->createdAt),
+            'updatedAt' => is_null($file->updatedAt) ? null : strtotime($file->updatedAt)
+        ];
+
+        return Output::ok($file);
+    }
 }
