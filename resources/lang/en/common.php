@@ -12,4 +12,5 @@ return [
     'bad_request'             => 'Bad request',
     'illegal_operation'       => 'Illegal operation',
     'invalid_team_name'       => 'Invalid team name',
+    'param_required'          => 'Parameter [:param] should not be empty',
 ];
