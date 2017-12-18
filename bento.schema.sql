@@ -11,7 +11,7 @@
  Target Server Version : 50720
  File Encoding         : utf-8
 
- Date: 12/17/2017 23:25:11 PM
+ Date: 12/18/2017 21:55:37 PM
 */
 
 SET NAMES utf8mb4;
@@ -36,6 +36,26 @@ CREATE TABLE `File` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+--  Table structure for `Layer`
+-- ----------------------------
+DROP TABLE IF EXISTS `Layer`;
+CREATE TABLE `Layer` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Layer ID',
+  `name` varchar(100) NOT NULL COMMENT 'Layer 名称',
+  `type` enum('1','2') DEFAULT NULL COMMENT 'Layer 类型',
+  `fileId` bigint(20) unsigned NOT NULL COMMENT '所属文件ID',
+  `parentId` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '父亲ID',
+  `position` float unsigned NOT NULL DEFAULT '0' COMMENT '位置',
+  `data` text COMMENT '数据',
+  `styles` text,
+  `render` enum('0','1') NOT NULL DEFAULT '1' COMMENT '是否渲染',
+  `status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '状态(0:已删除1:正常)',
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updatedAt` timestamp NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
 --  Table structure for `Team`
 -- ----------------------------
 DROP TABLE IF EXISTS `Team`;
@@ -44,11 +64,12 @@ CREATE TABLE `Team` (
   `name` varchar(100) NOT NULL COMMENT '组名称',
   `ownerId` int(10) unsigned NOT NULL COMMENT '所有者ID',
   `createdBy` int(10) unsigned NOT NULL COMMENT '创建者ID',
+  `status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '状态(0:已删除1:正常)',
   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updatedAt` timestamp NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
   KEY `idx_ownerId` (`ownerId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `TeamUser`
@@ -59,12 +80,12 @@ CREATE TABLE `TeamUser` (
   `userId` int(10) unsigned NOT NULL COMMENT '用户ID',
   `teamId` int(10) unsigned NOT NULL COMMENT '组ID',
   `status` enum('0','1') DEFAULT '1' COMMENT '状态(0:已解除;1-存续中)',
-  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updatedAt` timestamp NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
   KEY `idx_userId` (`userId`),
   KEY `idx_teamId` (`teamId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `Token`
