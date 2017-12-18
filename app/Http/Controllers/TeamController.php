@@ -43,13 +43,31 @@ class TeamController extends Controller
             return Output::error(trans('common.server_is_busy'), 40002, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
+        $team = Team::getTeam($team->id);
+
+        if (is_null($team)) {
+            return Output::error(trans('common.server_is_busy'), 40003, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $owner = !isset($team['owner']) || empty($team['owner']) ? null : [
+            'id'     => $team['owner']['id'],
+            'name'   => $team['owner']['name'],
+            'avatar' => $team['owner']['avatar'],
+        ];
+
+        $creator = !isset($team['creator']) || empty($team['creator']) ? null : [
+            'id'     => $team['creator']['id'],
+            'name'   => $team['creator']['name'],
+            'avatar' => $team['creator']['avatar'],
+        ];
+
         $team = [
-            'id'        => $team->id,
-            'name'      => $team->name,
-            'ownerId'   => $team->ownerId,
-            'createdBy' => $team->createdBy,
-            'createdAt' => strtotime($team->createdAt),
-            'updatedAt' => is_null($team->updatedAt) ? null : strtotime($team->updatedAt)
+            'id'        => $team['id'],
+            'name'      => $team['name'],
+            'owner'     => $owner,
+            'creator'   => $creator,
+            'createdAt' => strtotime($team['createdAt']),
+            'updatedAt' => is_null($team['updatedAt']) ? null : strtotime($team['updatedAt'])
         ];
 
         return Output::ok($team);
