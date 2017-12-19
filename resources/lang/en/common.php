@@ -2,7 +2,9 @@
 
 return [
     'unauthorized'            => 'Unauthorized',
-    'invalid_parameter_value' => 'Invalid parameter value [:param]',
+    'invalid_parameter_value' => 'Invalid parameter [:param] value',
+    'invalid_param_length'    => 'Invalid parameter [:param] length',
+    'param_must_be_int'       => 'Invalid parameter [:param]: expected int',
     'server_is_busy'          => 'Server is busy now',
     'operation_failed'        => 'Operation failed',
     'token_limit_reached'     => 'You have reached the maximum number of tokens',
@@ -13,4 +15,5 @@ return [
     'illegal_operation'       => 'Illegal operation',
     'invalid_team_name'       => 'Invalid team name',
     'param_required'          => 'Parameter [:param] should not be empty',
+    'parent_layer_not_found'  => 'Parent layer not found',
 ];

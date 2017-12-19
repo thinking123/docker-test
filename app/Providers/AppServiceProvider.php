@@ -19,5 +19,15 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         app('translator')->setLocale('en');
+        
+        app('validator')->extend('length', function ($attribute, $value, $parameters, $validator) {
+            $length = mb_strlen($value, 'UTF-8');
+
+            if (count($parameters) == 1) {
+                return $length >= $parameters[0];
+            }
+
+            return $length >= $parameters[0] && $length <= $parameters[1];
+        });
     }
 }
