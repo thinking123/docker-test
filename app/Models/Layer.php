@@ -24,10 +24,23 @@ class Layer extends Base
      * @param $typeName
      * @return int|null
      */
-    public static function getTypeByName($typeName)
+    public static function getTypeIdByName($typeName)
     {
         $typeName = strtoupper($typeName);
 
         return isset(static::TYPES[$typeName]) ? isset(static::TYPES[$typeName]) : null;
+    }
+
+    /**
+     * 根据类型 ID 获取对应名称
+     *
+     * @param int $id
+     * @return string|null
+     */
+    public static function getTypeNameById($id)
+    {
+        $types = array_flip(static::TYPES);
+
+        return isset($types[$id]) ? $types[$id] : null;
     }
 }
