@@ -66,7 +66,8 @@ class LayerController extends Controller
         $before = null;
 
         if ($inputs['before'] > 0) {
-            $before = Layer::where('fileId', $id)->where('parentId', $inputs['parent'])->where('status', Layer::STATUS_NORMAL)->find($inputs['before']);
+            $before = Layer::where('fileId', $id)->where('parentId', $inputs['parent'])->where('status',
+                Layer::STATUS_NORMAL)->find($inputs['before']);
 
             if (is_null($before)) {
                 return Output::error(trans('common.layer_not_found', ['param' => $inputs['before']]), 50003, [],
@@ -118,5 +119,46 @@ class LayerController extends Controller
         }
 
         return Output::ok($layer);
+    }
+
+    /**
+     * 删除 Layer
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteLayer(Request $request, $id)
+    {
+        $layer = Layer::where('status', Layer::STATUS_NORMAL)->find($id);
+
+        if (is_null($layer)) {
+            return Output::error(trans('common.layer_not_found', ['param' => $id]), 50100, [],
+                Response::HTTP_BAD_REQUEST);
+        }
+
+        $file = File::where('id', $layer->fileId)->where('status', File::STATUS_NORMAL)->first();
+
+        if (is_null($file)) {
+            return Output::error(trans('common.server_is_busy'), 50101, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        if ($file->userId != $request->user()->id) {
+            return Output::error(trans('common.layer_not_found', ['param' => $id]), 50102, [],
+                Response::HTTP_BAD_REQUEST);
+        }
+
+        $data = [
+            'status'    => Layer::STATUS_DELETED,
+            'updatedAt' => date('Y-m-d H:i:s')
+        ];
+
+        $affected = Layer::where('id', $id)->where('status', Layer::STATUS_NORMAL)->update($data);
+
+        if ($affected == 0) {
+            return Output::error(trans('common.server_is_busy'), 50103, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return Output::ok();
     }
 }
