@@ -66,7 +66,7 @@ class LayerController extends Controller
         $before = null;
 
         if ($inputs['before'] > 0) {
-            $before = Layer::where('fileId', $id)->where('status', Layer::STATUS_NORMAL)->find($inputs['before']);
+            $before = Layer::where('fileId', $id)->where('parentId', $inputs['parent'])->where('status', Layer::STATUS_NORMAL)->find($inputs['before']);
 
             if (is_null($before)) {
                 return Output::error(trans('common.layer_not_found', ['param' => $inputs['before']]), 50003, [],
@@ -77,6 +77,7 @@ class LayerController extends Controller
         $beforePosition = is_null($before) ? 0 : $before->position;
 
         $after = Layer::where('fileId', $id)
+            ->where('parentId', $inputs['parent'])
             ->where('position', '>', $beforePosition)
             ->where('status', Layer::STATUS_NORMAL)
             ->orderBy('position', 'ASC')
@@ -89,7 +90,7 @@ class LayerController extends Controller
         $layer->name = $inputs['name'];
         $layer->type = Layer::getTypeIdByName($inputs['type']);
         $layer->fileId = $id;
-        $layer->parentId = intval($inputs['parent']);
+        $layer->parentId = $inputs['parent'];
         $layer->position = ($beforePosition + $afterPosition) / 2;
         $layer->data = isset($inputs['data']) ? $inputs['data'] : '{}';
         $layer->styles = isset($inputs['styles']) ? $inputs['styles'] : '{}';

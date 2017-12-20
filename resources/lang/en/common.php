@@ -15,5 +15,5 @@ return [
     'illegal_operation'       => 'Illegal operation',
     'invalid_team_name'       => 'Invalid team name',
     'param_required'          => 'Parameter [:param] should not be empty',
-    'layer_not_found'         => 'Layer not found: [:param]',
+    'layer_not_found'         => 'Layer not found: :param',
 ];
