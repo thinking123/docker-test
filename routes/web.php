@@ -41,6 +41,8 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
 
         $router->post('/file/{id:[0-9]+}/layer', 'LayerController@createLayer');
 
+        $router->put('/layer/{id:[0-9]+}', 'LayerController@editLayer');
+
         $router->delete('/layer/{id:[0-9]+}', 'LayerController@deleteLayer');
     });
 });
