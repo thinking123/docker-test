@@ -108,17 +108,7 @@ class LayerController extends Controller
             return Output::error(trans('common.server_is_busy'), 50005, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $layer['type'] = Layer::getTypeNameById($layer['type']);
-
-        unset($layer['status']);
-
-        $layer['createdAt'] = strtotime($layer['createdAt']);
-
-        if (!is_null($layer['updatedAt'])) {
-            $layer['updatedAt'] = strtotime($layer['updatedAt']);
-        }
-
-        return Output::ok($layer);
+        return Output::ok(Layer::filter($layer));
     }
 
     /**
@@ -149,6 +139,8 @@ class LayerController extends Controller
         }
 
         $data = [
+            'parent'    => null,
+            'position'  => null,
             'status'    => Layer::STATUS_DELETED,
             'updatedAt' => date('Y-m-d H:i:s')
         ];
@@ -267,17 +259,7 @@ class LayerController extends Controller
             return Output::error(trans('common.server_is_busy'), 50207, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $layer['type'] = Layer::getTypeNameById($layer['type']);
-
-        unset($layer['status']);
-
-        $layer['createdAt'] = strtotime($layer['createdAt']);
-
-        if (!is_null($layer['updatedAt'])) {
-            $layer['updatedAt'] = strtotime($layer['updatedAt']);
-        }
-
-        return Output::ok($layer);
+        return Output::ok(Layer::filter($layer));
     }
 
     /**
@@ -295,10 +277,12 @@ class LayerController extends Controller
             return Output::error(trans('common.file_not_found'), 50300, [], Response::HTTP_BAD_REQUEST);
         }
 
-        if ($file->userId != $request->user()->id) {
+        if ($file->userId != $request->user()->id && $file->access != File::ACCESS_PUBLIC) {
             return Output::error(trans('common.file_not_found'), 50301, [], Response::HTTP_BAD_REQUEST);
         }
 
+        $layers = Layer::getFileLayers($id);
 
+        return Output::ok($layers);
     }
 }
