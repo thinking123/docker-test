@@ -41,7 +41,7 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
 
         $router->get('/file/{id:[0-9]+}/layers', 'LayerController@getFileLayers');
 
-        $router->get('/layer/{id:[0-9]+}/children', 'LayerController@getLayerChildren');
+        $router->get('/layer/{id:[0-9]+}/layers', 'LayerController@getLayerChildren');
 
         $router->post('/file/{id:[0-9]+}/layer', 'LayerController@createLayer');
 

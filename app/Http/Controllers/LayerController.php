@@ -266,7 +266,7 @@ class LayerController extends Controller
      * 获取 Layer
      *
      * @param Request $request
-     * @param int $id
+     * @param int $id file id
      * @return \Illuminate\Http\JsonResponse
      */
     public function getFileLayers(Request $request, $id)
@@ -282,6 +282,37 @@ class LayerController extends Controller
         }
 
         $layers = Layer::getFileLayers($id);
+
+        return Output::ok($layers);
+    }
+
+    /**
+     * 获取 Layer 的后代 Layer
+     *
+     * @param Request $request
+     * @param int $id layer id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getLayerChildren(Request $request, $id)
+    {
+        $layer = Layer::where('id', $id)->where('status', Layer::STATUS_NORMAL)->first();
+
+        if (is_null($layer)) {
+            return Output::error(trans('common.layer_not_found', ['param' => $id]), 50400, [],
+                Response::HTTP_BAD_REQUEST);
+        }
+
+        $file = File::where('id', $layer->fileId)->where('status', File::STATUS_NORMAL)->first();
+
+        if (is_null($file)) {
+            return Output::error(trans('common.file_not_found'), 50401, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($file->userId != $request->user()->id && $file->access != File::ACCESS_PUBLIC) {
+            return Output::error(trans('common.file_not_found'), 50402, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        $layers = Layer::getLayerChildren([$id]);
 
         return Output::ok($layers);
     }
