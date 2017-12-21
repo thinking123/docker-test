@@ -39,6 +39,10 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
 
         $router->post('/team', 'TeamController@createTeam');
 
+        $router->get('/file/{id:[0-9]+}/layers', 'LayerController@getFileLayers');
+
+        $router->get('/layer/{id:[0-9]+}/children', 'LayerController@getLayerChildren');
+
         $router->post('/file/{id:[0-9]+}/layer', 'LayerController@createLayer');
 
         $router->put('/layer/{id:[0-9]+}', 'LayerController@editLayer');

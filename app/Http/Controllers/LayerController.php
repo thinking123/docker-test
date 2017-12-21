@@ -279,4 +279,26 @@ class LayerController extends Controller
 
         return Output::ok($layer);
     }
+
+    /**
+     * 获取 Layer
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getFileLayers(Request $request, $id)
+    {
+        $file = File::where('id', $id)->where('status', File::STATUS_NORMAL)->first();
+
+        if (is_null($file)) {
+            return Output::error(trans('common.file_not_found'), 50300, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($file->userId != $request->user()->id) {
+            return Output::error(trans('common.file_not_found'), 50301, [], Response::HTTP_BAD_REQUEST);
+        }
+
+
+    }
 }

@@ -43,4 +43,23 @@ class Layer extends Base
 
         return isset($types[$id]) ? $types[$id] : null;
     }
+
+    /**
+     * 根据文件 id 获取其 layer
+     *
+     * @param int $id
+     * @param int $depth
+     * @return array
+     */
+    public static function getFileLayers($id, $depth = 5)
+    {
+        if ($depth < 1) {
+            return [];
+        }
+
+        $layers = Layer::where('fileId', $id)->where('parentId', 0)
+            ->where('status', Layer::STATUS_NORMAL)->orderBy('position', 'DESC')->get();
+
+        dd($layers);
+    }
 }
