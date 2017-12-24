@@ -19,4 +19,5 @@ return [
     'layer_not_found'         => 'Layer not found: :param',
     'email_not_registered'    => 'This email address is not registered',
     'magic_link_expired'      => 'This login verification has expired',
+    'waiting_for_confirm'     => 'Confirmation incomplete',
 ];

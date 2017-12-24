@@ -193,8 +193,20 @@ class IndexController extends Controller
 
         $magicToken = sha1($user['email'] . uniqid() . $user['salt'] . microtime(true));
 
-        if ('OK' != Redis::SETEX('magic:' . $magicToken, config('app.magic_max_lifetime'), $email)) {
+        $key = 'magicToken:' . $magicToken;
+
+        $magicHash = [
+            'email'    => $email,
+            'verified' => 0
+        ];
+
+        if ('OK' != Redis::hMset($key, $magicHash)) {
             return Output::error(trans('common.server_is_busy'), 10303, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        if (!Redis::expire($key, config('app.magic_max_lifetime'))) {
+            Redis::del($key);
+            return Output::error(trans('common.server_is_busy'), 10304, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         $params = [
@@ -205,16 +217,24 @@ class IndexController extends Controller
         $from = new Email('Bento', "noreply@makebento.com");
         $subject = 'Bento Login Verification';
         $to = new Email($user['name'], $user['email']);
-        $content = new Content("text/plain", 'http://app.makebento.com/?' . http_build_query($params));
+        $content = new Content("text/plain", 'https://app.makebento.com/verification?' . http_build_query($params));
         $mail = new Mail($from, $subject, $to, $content);
         $sg = new SendGrid(config('app.sendgrid_api_key'));
         $response = $sg->client->mail()->send()->post($mail);
 
         if (202 != $response->statusCode()) {
-            return Output::error(trans('common.server_is_busy'), 10304, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Output::error(trans('common.server_is_busy'), 10305, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return Output::ok();
+        $requestToken = sha1($user['email'] . microtime(true) . rand(1000000, 9999999) . uniqid() . $user['salt']);
+
+        if ('OK' != Redis::setEx('requestToken:' . $requestToken, config('app.magic_max_lifetime'), $magicToken)) {
+            return Output::error(trans('common.server_is_busy'), 10306, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return Output::ok([
+            'token' => $requestToken
+        ]);
     }
 
     /**
@@ -244,16 +264,32 @@ class IndexController extends Controller
             return Output::error($validator->errors()->first(), 10400, $inputs, Response::HTTP_BAD_REQUEST);
         }
 
-        $email = Redis::get('magic:' . $inputs['token']);
+        $magicToken = Redis::get('requestToken:' . $inputs['token']);
 
-        if (is_null($email) || $email !== $inputs['email']) {
+        if (is_null($magicToken)) {
             return Output::error(trans('common.magic_link_expired'), 10401, [], Response::HTTP_BAD_REQUEST);
         }
 
-        $user = User::getUserByEmail($email);
+        $magicHash = Redis::hGetAll('magicToken:' . $magicToken);
+
+        if (!isset($magicHash['email']) || !isset($magicHash['verified'])) {
+            return Output::error(trans('common.magic_link_expired'), 10402, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($magicHash['email'] !== $inputs['email']) {
+            return Output::error(trans('common.magic_link_expired'), 10403, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($magicHash['verified'] != 1) {
+            return Output::error(trans('common.waiting_for_confirm'), 10404, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        Redis::del('requestToken:' . $inputs['token'], 'magicToken:' . $magicToken);
+
+        $user = User::getUserByEmail($magicHash['email']);
 
         if (is_null($user)) {
-            return Output::error(trans('common.server_is_busy'), 10402, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Output::error(trans('common.server_is_busy'), 10405, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         $agent = $request->header('user-agent', '');
@@ -262,7 +298,7 @@ class IndexController extends Controller
             $token = Token::genToken($user['id'], $user['salt'], $agent, $request->getClientIp());
         } catch (\Exception $e) {
             static::log($e);
-            return Output::error($e->getMessage(), 10403, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Output::error($e->getMessage(), 10406, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         $data = [
@@ -273,5 +309,55 @@ class IndexController extends Controller
         ];
 
         return Output::ok($data);
+    }
+
+    /**
+     * 确认一次登录
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public static function confirmMagicLogin(Request $request)
+    {
+        $inputs = $request->only('email', 'token');
+
+        $rules = [
+            'email' => 'required|email',
+            'token' => 'required'
+        ];
+
+        $messages = [
+            'email.required' => trans('common.param_required', ['param' => 'email']),
+            'email.email'    => trans('common.invalid_email_address', ['param' => 'email']),
+            'token.required' => trans('common.param_required', ['param' => 'token']),
+        ];
+
+        $validator = Validator::make($inputs, $rules, $messages);
+
+        if ($validator->fails()) {
+            return Output::error($validator->errors()->first(), 10500, $inputs, Response::HTTP_BAD_REQUEST);
+        }
+
+        $key = 'magicToken:' . $inputs['token'];
+
+        $magicHash = Redis::hGetAll($key);
+
+        if (!isset($magicHash['email']) || !isset($magicHash['verified'])) {
+            return Output::error(trans('common.magic_link_expired'), 10501, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($magicHash['email'] !== $inputs['email']) {
+            return Output::error(trans('common.magic_link_expired'), 10502, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($magicHash['verified'] == 1) {
+            return Output::error(trans('common.magic_link_expired'), 10503, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if (false === Redis::hSet($key, 'verified', 1)) {
+            return Output::error(trans('common.magic_link_expired'), 10504, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return Output::ok();
     }
 }
