@@ -4,6 +4,7 @@ return [
     'unauthorized'            => 'Unauthorized',
     'invalid_parameter_value' => 'Invalid parameter [:param] value',
     'invalid_param_length'    => 'Invalid parameter [:param] length',
+    'invalid_email_address'   => 'Invalid email address: :param',
     'param_must_be_int'       => 'Invalid parameter [:param]: expected int',
     'server_is_busy'          => 'Server is busy now',
     'operation_failed'        => 'Operation failed',
@@ -16,4 +17,6 @@ return [
     'invalid_team_name'       => 'Invalid team name',
     'param_required'          => 'Parameter [:param] should not be empty',
     'layer_not_found'         => 'Layer not found: :param',
+    'email_not_registered'    => 'This email address is not registered',
+    'magic_link_expired'      => 'This login verification has expired',
 ];

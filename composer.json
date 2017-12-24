@@ -14,7 +14,8 @@
     "vlucas/phpdotenv": "~2.2",
     "google/apiclient": "~2.2",
     "barryvdh/laravel-cors": "0.10.*",
-    "illuminate/redis": "~5.5"
+    "illuminate/redis": "~5.5",
+    "sendgrid/sendgrid": "~6.0"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",

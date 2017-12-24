@@ -17,6 +17,8 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
 
     $router->post('/token', 'IndexController@login');
 
+    $router->post('/magic', 'IndexController@createMagicLink');
+
     $router->group(['middleware' => ['auth']], function () use ($router) {
 
         $router->put('/token', 'IndexController@refreshAccessToken');

@@ -81,4 +81,17 @@ class User extends Base
 
         return $user;
     }
+
+    /**
+     * 根据电子邮件地址获取用户信息
+     *
+     * @param string $email
+     * @return array|null
+     */
+    public static function getUserByEmail($email)
+    {
+        $user = User::where('email', $email)->first();
+
+        return is_null($user) ? null : $user->toArray();
+    }
 }
