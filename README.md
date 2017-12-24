@@ -1,5 +1,10 @@
 # Bento-Background-PHP
 
+测试域名: http://api.fising.cn
+
+生产域名: https://api.makebento.com (新接口暂不可用)
+
+
 | 接口名称 | 请求方法 | 接口地址 | 请求参数 | 备注 |
 | :--- | :--- | :--- | :--- | --- |
 | 1. Google 登录 |  POST | /token | source: required | 固定值 'google' | 
