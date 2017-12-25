@@ -38,6 +38,6 @@
 | |  |  | data:optional | JSON 字符串 |
 | |  |  | styles:optional | JSON 字符串 |
 | 16. 删除 layer | DELETE | /layer/{id} |  |  |
-| 17. 获取文件顶层 layer | DELETE | /file/{id}/layers |  |  |
-| 17. 获取 layer 后代 | DELETE | /layer/{id}/layers |  |  |
+| 17. 获取文件顶层 layer | GET | /file/{id}/layers |  |  |
+| 17. 获取 layer 后代 | GTE | /layer/{id}/layers |  |  |
 | 18. 创建 Team | POST | /team | name:required | 团队名称 |
