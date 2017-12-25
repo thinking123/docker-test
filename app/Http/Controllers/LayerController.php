@@ -93,8 +93,8 @@ class LayerController extends Controller
         $layer->fileId = $id;
         $layer->parentId = $inputs['parent'];
         $layer->position = ($beforePosition + $afterPosition) / 2;
-        $layer->data = isset($inputs['data']) ? $inputs['data'] : '{}';
-        $layer->styles = isset($inputs['styles']) ? $inputs['styles'] : '{}';
+        $layer->data = isset($inputs['data']) && !is_null(json_decode($inputs['data'])) ? $inputs['data'] : '{}';
+        $layer->styles = isset($inputs['styles']) && !is_null(json_decode($inputs['styles'])) ? $inputs['styles'] : '{}';
         $layer->status = Layer::STATUS_NORMAL;
         $layer->createdAt = date('Y-m-d H:i:s');
 
@@ -242,8 +242,8 @@ class LayerController extends Controller
             'name'      => $inputs['name'],
             'parentId'  => $inputs['parent'],
             'position'  => ($beforePosition + $afterPosition) / 2,
-            'data'      => isset($inputs['data']) ? $inputs['data'] : '{}',
-            'styles'    => isset($inputs['styles']) ? $inputs['styles'] : '{}',
+            'data'      => isset($inputs['data']) && !is_null(json_decode($inputs['data'])) ? $inputs['data'] : '{}',
+            'styles'    => isset($inputs['styles']) && !is_null(json_decode($inputs['styles'])) ? $inputs['styles'] : '{}',
             'updatedAt' => date('Y-m-d H:i:s')
         ];
 
