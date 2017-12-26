@@ -52,5 +52,7 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
         $router->put('/layer/{id:[0-9]+}', 'LayerController@editLayer');
 
         $router->delete('/layer/{id:[0-9]+}', 'LayerController@deleteLayer');
+
+        $router->post('/component', 'ComponentController@createComponent');
     });
 });
