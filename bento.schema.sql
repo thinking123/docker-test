@@ -11,11 +11,29 @@
  Target Server Version : 50720
  File Encoding         : utf-8
 
- Date: 12/18/2017 21:55:37 PM
+ Date: 12/26/2017 17:45:22 PM
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+--  Table structure for `Component`
+-- ----------------------------
+DROP TABLE IF EXISTS `Component`;
+CREATE TABLE `Component` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '组件ID',
+  `name` varchar(100) NOT NULL DEFAULT '' COMMENT '组件名',
+  `userId` int(11) unsigned DEFAULT NULL COMMENT '用户ID',
+  `teamId` int(11) unsigned DEFAULT NULL COMMENT '用户组ID',
+  `access` enum('0','1') NOT NULL DEFAULT '0' COMMENT '文件访问权限(0:私有1:公共)',
+  `status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '文件状态(0:已删除1:正常)',
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updatedAt` timestamp NULL DEFAULT NULL COMMENT '最后修改时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_userId` (`userId`),
+  KEY `idx_teamId` (`teamId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `File`
@@ -33,7 +51,7 @@ CREATE TABLE `File` (
   PRIMARY KEY (`id`),
   KEY `idx_userId` (`userId`),
   KEY `idx_teamId` (`teamId`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `Layer`
@@ -44,16 +62,17 @@ CREATE TABLE `Layer` (
   `name` varchar(100) NOT NULL COMMENT 'Layer 名称',
   `type` enum('1','2') DEFAULT NULL COMMENT 'Layer 类型',
   `fileId` bigint(20) unsigned NOT NULL COMMENT '所属文件ID',
-  `parentId` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '父亲ID',
-  `position` float unsigned NOT NULL DEFAULT '0' COMMENT '位置',
+  `parentId` bigint(20) unsigned DEFAULT '0' COMMENT '父亲ID',
+  `position` float unsigned DEFAULT '0' COMMENT '位置',
   `data` text COMMENT '数据',
   `styles` text,
-  `render` enum('0','1') NOT NULL DEFAULT '1' COMMENT '是否渲染',
   `status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '状态(0:已删除1:正常)',
   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updatedAt` timestamp NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_parentId_position` (`parentId`,`position`) USING BTREE,
+  KEY `idx_fileId` (`fileId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `Team`
@@ -69,7 +88,7 @@ CREATE TABLE `Team` (
   `updatedAt` timestamp NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
   KEY `idx_ownerId` (`ownerId`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `TeamUser`
@@ -85,7 +104,7 @@ CREATE TABLE `TeamUser` (
   PRIMARY KEY (`id`),
   KEY `idx_userId` (`userId`),
   KEY `idx_teamId` (`teamId`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `Token`
@@ -107,7 +126,7 @@ CREATE TABLE `Token` (
   UNIQUE KEY `uniq_refreshToken` (`refreshToken`) USING HASH,
   UNIQUE KEY `uniq_accessToken` (`accessToken`) USING HASH,
   KEY `idx_userId` (`userId`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `User`
@@ -126,6 +145,6 @@ CREATE TABLE `User` (
   `updatedAt` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_googleId` (`googleId`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;
