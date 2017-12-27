@@ -20,4 +20,5 @@ return [
     'email_not_registered'    => 'This email address is not registered',
     'magic_link_expired'      => 'This login verification has expired',
     'waiting_for_confirm'     => 'Confirmation incomplete',
+    'component_not_found'     => 'Component not found',
 ];
