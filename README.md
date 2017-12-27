@@ -26,7 +26,7 @@
 | 12. 编辑文件 | PUT | /file/{id}| name:required | 文件名称 |
 |  |  | | public:required | 是否公开(是1否0) |
 | 13. 删除文件 | DELETE | /file/{id}|  |  |
-| 14. 创建 layer | POST | /file|component/{id}/layer | name:required | Layer 名称 |
+| 14. 创建 layer | POST | /file`|`component/{id}/layer | name:required | Layer 名称 |
 | |  |  | parent:required | 父 Layer id |
 | |  |  | before:required | 同级下一层 Layer 的 id |
 | |  |  | type:required | Layer 的类型 |
