@@ -104,4 +104,38 @@ class ComponentController extends Controller
 
         return Output::error(trans('common.operation_failed'), 60103);
     }
+
+    /**
+     * 获取组件
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getComponent(Request $request, $id)
+    {
+        $component = Component::where('id', $id)->where('status', Component::STATUS_NORMAL)->first();
+
+        if (is_null($component)) {
+            return Output::error(trans('common.component_not_found'), 60200, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($component->userId !== $request->user()->id && $component->access != Component::ACCESS_PUBLIC) {
+            return Output::error(trans('common.component_not_found'), 60201, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        $component = [
+            'id'        => $component->id,
+            'name'      => $component->name,
+            'userId'    => $component->userId,
+            'teamId'    => $component->teamId,
+            'access'    => $component->access == 1 ? 'PUBLIC' : 'PRIVATE',
+            'editable'  => $component->userId == $request->user()->id,
+            'deletable' => $component->userId == $request->user()->id,
+            'createdAt' => strtotime($component->createdAt),
+            'updatedAt' => is_null($component->updatedAt) ? null : strtotime($component->updatedAt)
+        ];
+
+        return Output::ok($component);
+    }
 }
