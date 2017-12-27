@@ -11,7 +11,7 @@
  Target Server Version : 50720
  File Encoding         : utf-8
 
- Date: 12/26/2017 17:45:22 PM
+ Date: 12/27/2017 23:22:16 PM
 */
 
 SET NAMES utf8mb4;
@@ -33,7 +33,7 @@ CREATE TABLE `Component` (
   PRIMARY KEY (`id`),
   KEY `idx_userId` (`userId`),
   KEY `idx_teamId` (`teamId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `File`
@@ -61,7 +61,8 @@ CREATE TABLE `Layer` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Layer ID',
   `name` varchar(100) NOT NULL COMMENT 'Layer 名称',
   `type` enum('1','2') DEFAULT NULL COMMENT 'Layer 类型',
-  `fileId` bigint(20) unsigned NOT NULL COMMENT '所属文件ID',
+  `fileId` bigint(20) unsigned DEFAULT '0' COMMENT '所属文件ID',
+  `componentId` bigint(20) unsigned DEFAULT NULL COMMENT '所属组件ID',
   `parentId` bigint(20) unsigned DEFAULT '0' COMMENT '父亲ID',
   `position` float unsigned DEFAULT '0' COMMENT '位置',
   `data` text COMMENT '数据',
@@ -71,7 +72,8 @@ CREATE TABLE `Layer` (
   `updatedAt` timestamp NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_parentId_position` (`parentId`,`position`) USING BTREE,
-  KEY `idx_fileId` (`fileId`)
+  KEY `idx_fileId` (`fileId`),
+  KEY `idx_componentId` (`componentId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -126,7 +128,7 @@ CREATE TABLE `Token` (
   UNIQUE KEY `uniq_refreshToken` (`refreshToken`) USING HASH,
   UNIQUE KEY `uniq_accessToken` (`accessToken`) USING HASH,
   KEY `idx_userId` (`userId`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `User`
@@ -145,6 +147,6 @@ CREATE TABLE `User` (
   `updatedAt` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_googleId` (`googleId`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;
