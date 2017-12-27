@@ -56,15 +56,20 @@ class LayerController extends Controller
         }
 
         if ($inputs['parent'] > 0) {
-            $parent = Layer::where('fileId', $id)->where('status', Layer::STATUS_NORMAL)->find($inputs['parent']);
+            $parent = Layer::where('status', Layer::STATUS_NORMAL)->find($inputs['parent']);
 
             if (is_null($parent)) {
                 return Output::error(trans('common.layer_not_found', ['param' => $inputs['parent']]), 50002, [],
                     Response::HTTP_BAD_REQUEST);
             }
 
-            if ($parent->type != 1 && $parent->type != 4) {
+            if (is_null($parent->fileId) || $parent->fileId != $id) {
                 return Output::error(trans('common.illegal_operation', ['param' => $inputs['parent']]), 50003, [],
+                    Response::HTTP_BAD_REQUEST);
+            }
+
+            if ($parent->type != 1 && $parent->type != 4) {
+                return Output::error(trans('common.illegal_operation', ['param' => $inputs['parent']]), 50004, [],
                     Response::HTTP_BAD_REQUEST);
             }
         }
@@ -76,7 +81,7 @@ class LayerController extends Controller
                 Layer::STATUS_NORMAL)->find($inputs['before']);
 
             if (is_null($before)) {
-                return Output::error(trans('common.layer_not_found', ['param' => $inputs['before']]), 50004, [],
+                return Output::error(trans('common.layer_not_found', ['param' => $inputs['before']]), 50005, [],
                     Response::HTTP_BAD_REQUEST);
             }
         }
@@ -106,13 +111,13 @@ class LayerController extends Controller
         $layer->createdAt = date('Y-m-d H:i:s');
 
         if (!$layer->save()) {
-            return Output::error(trans('common.server_is_busy'), 50005, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Output::error(trans('common.server_is_busy'), 50006, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         $layer = Layer::where('fileId', $id)->where('status', Layer::STATUS_NORMAL)->find($layer->id)->toArray();
 
         if (is_null($layer)) {
-            return Output::error(trans('common.server_is_busy'), 50006, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Output::error(trans('common.server_is_busy'), 50007, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return Output::ok(Layer::filter($layer));
