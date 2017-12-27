@@ -428,4 +428,28 @@ class LayerController extends Controller
 
         return Output::ok(Layer::filter($layer));
     }
+
+    /**
+     * 获取组件 Layer 列表
+     *
+     * @param Request $request
+     * @param int $id file id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getComponentLayers(Request $request, $id)
+    {
+        $component = Component::where('id', $id)->where('status', Component::STATUS_NORMAL)->first();
+
+        if (is_null($component)) {
+            return Output::error(trans('common.component_not_found'), 50600, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($component->userId != $request->user()->id && $component->access != Component::ACCESS_PUBLIC) {
+            return Output::error(trans('common.component_not_found'), 50601, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        $layers = Layer::getComponentLayers($id);
+
+        return Output::ok($layers);
+    }
 }

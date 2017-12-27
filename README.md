@@ -38,7 +38,7 @@
 | |  |  | data:optional | JSON 字符串 |
 | |  |  | styles:optional | JSON 字符串 |
 | 16. 删除 layer | DELETE | /layer/{id} |  |  |
-| 17. 获取文件顶层 layer | GET | /file/{id}/layers |  |  |
+| 17. 获取文件或组件顶层 layer | GET | /file\\|component/{id}/layers |  |  |
 | 17. 获取 layer 后代 | GET | /layer/{id}/layers |  |  |
 | 18. 创建 Team | POST | /team | name:required | 团队名称 |
 | 19. 创建组件 |  POST | /component| name:optional | 组件名称 |
@@ -49,3 +49,4 @@
 |  |   | | limit:optional | 最大限量, 默认 10 |
 | 23. 编辑组件 | PUT | /component/{id}| name:required | 组件名称 |
 |  |  | | public:required | 是否公开(是1否0) |
+| 24. 获取组件顶层 layer | GET | /component/{id}/layers |  |  |

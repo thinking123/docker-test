@@ -90,6 +90,51 @@ class Layer extends Base
     }
 
     /**
+     * 根据组件 id 获取其 layer
+     *
+     * @param int $id
+     * @param int $depth
+     * @return array
+     */
+    public static function getComponentLayers($id, $depth = 5)
+    {
+        if ($depth < 1) {
+            return [];
+        }
+
+        $layers = Layer::where('componentId', $id)->where('parentId', 0)->where('status', Layer::STATUS_NORMAL)
+            ->orderBy('position', 'DESC')->get()->toArray();
+
+        if ($depth == 1 || empty($layers)) {
+            return $layers;
+        }
+
+        $ids = [];
+
+        foreach ($layers as $layer) {
+            $ids[] = $layer['id'];
+        }
+
+        $children = static::getLayerChildren($ids, $depth - 1);
+
+        if (!empty($children)) {
+            foreach ($layers as & $layer) {
+                foreach ($children as $parentId => $child) {
+                    if ($layer['id'] == $parentId) {
+                        if (!isset($layer['children'])) {
+                            $layer['children'] = [];
+                        }
+
+                        $layer['children'][] = $child;
+                    }
+                }
+            }
+        }
+
+        return $layers;
+    }
+
+    /**
      * 获取 Layer 的后代
      *
      * @param array $layerIds
