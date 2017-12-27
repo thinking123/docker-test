@@ -43,3 +43,4 @@
 | 18. 创建 Team | POST | /team | name:required | 团队名称 |
 | 19. 创建组件 |  POST | /component| name:optional | 组件名称 |
 | |  | | public:optional | 是否公开(是1否0) |
+| 20. 删除组件 | DELETE | /component/{id}|  |  |
