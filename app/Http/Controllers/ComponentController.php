@@ -159,4 +159,60 @@ class ComponentController extends Controller
             'components' => $components
         ]);
     }
+
+    /**
+     * 更新组件
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateComponent(Request $request, $id)
+    {
+        $component = Component::where('id', $id)->where('status', Component::STATUS_NORMAL)->first();
+
+        if (is_null($component)) {
+            return Output::error(trans('common.component_not_found'), 60400, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($component->userId != $request->user()->id) {
+            return Output::error(trans('common.illegal_operation'), 60401, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        $name = trim($request->input('name', ''));
+        $public = trim($request->input('public', ''));
+
+        if ($name == '' && $public == '') {
+            return Output::error(trans('common.bad_request'), 60402, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        $data = [
+            'updatedAt' => date('Y-m-d H:i:s')
+        ];
+
+        if ('' !== $name) {
+            $data['name'] = $name;
+        }
+
+        if ('' !== $public) {
+            $public = intval(boolval($public));
+            $data['access'] = "{$public}";
+        }
+
+        try {
+            $affected = Component::where('id', $id)
+                ->where('userId', $request->user()->id)
+                ->where('status', Component::STATUS_NORMAL)
+                ->update($data);
+        } catch (\Exception $e) {
+            static::log($e);
+            return Output::error(trans('common.server_is_busy'), 60403, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        if ($affected > 0) {
+            return Output::ok();
+        }
+
+        return Output::error(trans('common.operation_failed'), 60404);
+    }
 }

@@ -47,3 +47,5 @@
 | 21. 获取组件 | GET | /component/{id}| |  |
 | 22. 组件列表 |  GET | /components | offset:optional | 偏移位置, 默认 0 |
 |  |   | | limit:optional | 最大限量, 默认 10 |
+| 23. 编辑组件 | PUT | /component/{id}| name:required | 组件名称 |
+|  |  | | public:required | 是否公开(是1否0) |

@@ -60,5 +60,7 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
         $router->get('/components', 'ComponentController@getComponents');
 
         $router->delete('/component/{id:[0-9]+}', 'ComponentController@deleteComponent');
+
+        $router->put('/component/{id:[0-9]+}', 'ComponentController@updateComponent');
     });
 });
