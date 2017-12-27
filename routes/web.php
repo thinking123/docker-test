@@ -47,7 +47,7 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
 
         $router->get('/layer/{id:[0-9]+}/layers', 'LayerController@getLayerChildren');
 
-        $router->post('/file/{id:[0-9]+}/layer', 'LayerController@createLayer');
+        $router->post('/file/{id:[0-9]+}/layer', 'LayerController@createFileLayer');
 
         $router->put('/layer/{id:[0-9]+}', 'LayerController@editLayer');
 
@@ -62,5 +62,7 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
         $router->delete('/component/{id:[0-9]+}', 'ComponentController@deleteComponent');
 
         $router->put('/component/{id:[0-9]+}', 'ComponentController@updateComponent');
+
+        $router->post('/component/{id:[0-9]+}/layer', 'LayerController@createComponentLayer');
     });
 });
