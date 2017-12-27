@@ -16,7 +16,7 @@ class ComponentController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function createComponent($request)
+    public function createComponent(Request $request)
     {
         $name = trim($request->input('name', 'untitled'));
         $public = trim($request->input('public', '0'));
