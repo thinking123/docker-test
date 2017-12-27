@@ -41,3 +41,5 @@
 | 17. 获取文件顶层 layer | GET | /file/{id}/layers |  |  |
 | 17. 获取 layer 后代 | GET | /layer/{id}/layers |  |  |
 | 18. 创建 Team | POST | /team | name:required | 团队名称 |
+| 19. 创建组件 |  POST | /component| name:optional | 组件名称 |
+| |  | | public:optional | 是否公开(是1否0) |
