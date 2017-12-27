@@ -138,4 +138,25 @@ class ComponentController extends Controller
 
         return Output::ok($component);
     }
+
+    /**
+     * 获取用户组件列表
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getComponents(Request $request)
+    {
+        $offset = (int)$request->input('offset', 0);
+        $limit = (int)$request->input('limit', Component::DEFAULT_LIST_COUNT);
+
+        $offset = $offset < 0 ? 0 : $offset;
+        $limit = ($offset < 0 || $offset > Component::DEFAULT_LIST_COUNT) ? Component::DEFAULT_LIST_COUNT : $limit;
+
+        $components = Component::getUserComponents($request->user()->id, $offset, $limit);
+
+        return Output::ok([
+            'components' => $components
+        ]);
+    }
 }

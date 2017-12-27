@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 class FileController extends Controller
 {
     /**
-     * 获取用户全部文件
+     * 获取用户文件列表
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse

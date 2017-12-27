@@ -45,3 +45,5 @@
 | |  | | public:optional | 是否公开(是1否0) |
 | 20. 删除组件 | DELETE | /component/{id}|  |  |
 | 21. 获取组件 | GET | /component/{id}| |  |
+| 22. 组件列表 |  GET | /components | offset:optional | 偏移位置, 默认 0 |
+|  |   | | limit:optional | 最大限量, 默认 10 |

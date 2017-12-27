@@ -46,4 +46,33 @@ class Component extends Base
             return $component;
         }
     }
+
+    /**
+     * 获取用户组件列表
+     *
+     * @param int $userId
+     * @param int $offset
+     * @param int $limit
+     * @return Array
+     */
+    public static function getUserComponents($userId, $offset, $limit = Component::DEFAULT_LIST_COUNT)
+    {
+        $builder = static::where('userId', $userId)->where('status', Component::STATUS_NORMAL)->orderBy('id', 'DESC');
+
+        if ($offset > 0) {
+            $builder->where('id', '<', $offset);
+        }
+
+        $components = $builder->limit($limit)->get()->toArray();
+
+        foreach ($components as & $component) {
+            $component['access'] = $component['access'] == 1 ? 'PUBLIC' : 'PRIVATE';
+            $component['createdAt'] = strtotime($component['createdAt']);
+            $component['updatedAt'] = is_null($component['updatedAt']) ? null : strtotime($component['updatedAt']);
+
+            unset($component['status']);
+        }
+
+        return $components;
+    }
 }
