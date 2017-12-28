@@ -51,7 +51,7 @@
 | 23. 编辑组件 | PUT | /component/{id}| name:required | 组件名称 |
 |  |  | | public:required | 是否公开(是1否0) |
 
-### 认证方法与参数格式
+### 认证方法
 
 1. 接口 1 ~ 4 不需要认证；
 2. 认证方法：请求头添加 "Authorization: Bearer {accessToken}" 
@@ -60,7 +60,7 @@
 
 参数格式支持两种: "application/json" 和 "application/x-www-form-urlencoded"
 
-### 响应格式说明
+### 响应格式
 
 成功时:
 
