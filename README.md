@@ -4,6 +4,7 @@
 
 生产域名: https://api.makebento.com (新接口暂不可用)
 
+### 接口列表
 
 | 接口名称 | 请求方法 | 接口地址 | 请求参数 | 备注 |
 | :--- | :--- | :--- | :--- | --- |
@@ -49,3 +50,9 @@
 |  |   | | limit:optional | 最大限量, 默认 10 |
 | 23. 编辑组件 | PUT | /component/{id}| name:required | 组件名称 |
 |  |  | | public:required | 是否公开(是1否0) |
+
+### 认证方法与参数格式
+
+1. 接口 1 ~ 4 不需要认证；
+2. 认证方法：请求头添加 "Authorization: Bearer {accessToken}"
+3. 参数格式支持两种: "application/json" 和 "application/x-www-form-urlencoded"
