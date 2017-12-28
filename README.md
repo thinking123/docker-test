@@ -54,5 +54,34 @@
 ### 认证方法与参数格式
 
 1. 接口 1 ~ 4 不需要认证；
-2. 认证方法：请求头添加 "Authorization: Bearer {accessToken}"
-3. 参数格式支持两种: "application/json" 和 "application/x-www-form-urlencoded"
+2. 认证方法：请求头添加 "Authorization: Bearer {accessToken}" 
+
+### 参数格式
+
+参数格式支持两种: "application/json" 和 "application/x-www-form-urlencoded"
+
+### 响应格式说明
+
+成功时:
+
+```json
+{
+  "status": true,
+  "data": {
+    // 这里是业务数据
+  }
+}
+```
+
+失败时:
+
+```json
+{
+  "status": false,
+  "code": 10101, // 错误代码
+  "message": "Invalid parameter [id_token] value",
+  "data": {
+    // 请求相关数据  
+  }
+}
+```
