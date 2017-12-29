@@ -14,17 +14,23 @@ class File extends Base
 
     protected $table = 'File';
 
+    public function owner()
+    {
+        return $this->hasOne('App\Models\User', 'id', 'userId');
+    }
+
     /**
      * 获取用户文件列表
      *
      * @param int $userId
      * @param int $offset
      * @param int $limit
-     * @return Array
+     * @return array
      */
     public static function getUserFiles($userId, $offset, $limit = File::DEFAULT_LIST_COUNT)
     {
-        $builder = static::where('userId', $userId)->where('status', File::STATUS_NORMAL)->orderBy('id', 'DESC');
+        $builder = static::with('owner')->where('userId', $userId)->where('status', File::STATUS_NORMAL)->orderBy('id',
+            'DESC');
 
         if ($offset > 0) {
             $builder->where('id', '<', $offset);
@@ -37,7 +43,16 @@ class File extends Base
             $file['createdAt'] = strtotime($file['createdAt']);
             $file['updatedAt'] = is_null($file['updatedAt']) ? null : strtotime($file['updatedAt']);
 
-            unset($file['status']);
+            if (isset($file['owner']) && !empty($file['owner'])) {
+                $file['owner'] = [
+                    'id'     => $file['owner']['id'],
+                    'name'   => $file['owner']['name'],
+                    'avatar' => $file['owner']['avatar'],
+                    'email'  => $file['owner']['email'],
+                ];
+            }
+
+            unset($file['userId'], $file['status']);
         }
 
         return $files;

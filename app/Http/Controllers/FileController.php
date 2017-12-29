@@ -75,16 +75,27 @@ class FileController extends Controller
             return Output::error(trans('common.server_is_busy'), 30002, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
+        $file = File::with('owner')->find($file->id);
+
+        if (is_null($file)) {
+            return Output::error(trans('common.server_is_busy'), 30003, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
         $file = [
             'id'        => $file->id,
             'name'      => $file->name,
-            'userId'    => $file->userId,
             'teamId'    => $file->teamId,
             'access'    => $file->access == 1 ? 'PUBLIC' : 'PRIVATE',
             'editable'  => $file->userId == $request->user()->id,
             'deletable' => $file->userId == $request->user()->id,
             'createdAt' => strtotime($file->createdAt),
-            'updatedAt' => is_null($file->updatedAt) ? null : strtotime($file->updatedAt)
+            'updatedAt' => is_null($file->updatedAt) ? null : strtotime($file->updatedAt),
+            'owner'     => [
+                'id'     => $file->owner->id,
+                'name'   => $file->owner->name,
+                'avatar' => $file->owner->avatar,
+                'email'  => $file->owner->email,
+            ]
         ];
 
         return Output::ok($file);
@@ -145,6 +156,7 @@ class FileController extends Controller
         }
 
         if ($affected > 0) {
+
             return Output::ok();
         }
 
@@ -160,7 +172,7 @@ class FileController extends Controller
      */
     public function getFile(Request $request, $id)
     {
-        $file = File::where('id', $id)->where('status', File::STATUS_NORMAL)->first();
+        $file = File::with('owner')->where('id', $id)->where('status', File::STATUS_NORMAL)->first();
 
         if (is_null($file)) {
             return Output::error(trans('common.file_not_found'), 30200, [], Response::HTTP_BAD_REQUEST);
@@ -173,13 +185,18 @@ class FileController extends Controller
         $file = [
             'id'        => $file->id,
             'name'      => $file->name,
-            'userId'    => $file->userId,
             'teamId'    => $file->teamId,
             'access'    => $file->access == 1 ? 'PUBLIC' : 'PRIVATE',
             'editable'  => $file->userId == $request->user()->id,
             'deletable' => $file->userId == $request->user()->id,
             'createdAt' => strtotime($file->createdAt),
-            'updatedAt' => is_null($file->updatedAt) ? null : strtotime($file->updatedAt)
+            'updatedAt' => is_null($file->updatedAt) ? null : strtotime($file->updatedAt),
+            'owner'     => [
+                'id'     => $file->owner->id,
+                'name'   => $file->owner->name,
+                'avatar' => $file->owner->avatar,
+                'email'  => $file->owner->email,
+            ]
         ];
 
         return Output::ok($file);
