@@ -53,12 +53,14 @@ class TeamController extends Controller
             'id'     => $team['owner']['id'],
             'name'   => $team['owner']['name'],
             'avatar' => $team['owner']['avatar'],
+            'email'  => $team['owner']['email'],
         ];
 
         $creator = !isset($team['creator']) || empty($team['creator']) ? null : [
             'id'     => $team['creator']['id'],
             'name'   => $team['creator']['name'],
             'avatar' => $team['creator']['avatar'],
+            'email'  => $team['creator']['email'],
         ];
 
         $team = [
