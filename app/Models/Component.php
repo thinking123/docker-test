@@ -14,6 +14,11 @@ class Component extends Base
 
     protected $table = 'Component';
 
+    public function owner()
+    {
+        return $this->hasOne('App\Models\User', 'id', 'userId');
+    }
+
     /**
      * 新建组件
      *
