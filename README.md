@@ -22,10 +22,10 @@
 | 9. 文件列表 |  GET | /files| offset:optional | 偏移位置, 默认 0 |
 |  |   | | limit:optional | 最大限量, 默认 10 |
 | 10. 创建文件 |  POST | /file| name:optional | 文件名称 |
-| |  | | public:optional | 是否公开(是1否0) |
+| |  | | public:optional | 是否公开(是:true/1否:false/0) |
 | 11. 获取文件 | GET | /file/{id}| |  |
 | 12. 编辑文件 | PUT | /file/{id}| name:required | 文件名称 |
-|  |  | | public:required | 是否公开(是1否0) |
+|  |  | | public:required | 是否公开(是:true/1否:false/0) |
 | 13. 删除文件 | DELETE | /file/{id}|  |  |
 | 14. 创建 layer | POST | /file\\|component/{id}/layer | name:required | Layer 名称 |
 | |  |  | parent:required | 父 Layer id |
@@ -43,13 +43,13 @@
 | 17. 获取 layer 后代 | GET | /layer/{id}/layers |  |  |
 | 18. 创建 Team | POST | /team | name:required | 团队名称 |
 | 19. 创建组件 |  POST | /component| name:optional | 组件名称 |
-| |  | | public:optional | 是否公开(是1否0) |
+| |  | | public:optional | 是否公开(是:true/1否:false/0) |
 | 20. 删除组件 | DELETE | /component/{id}|  |  |
 | 21. 获取组件 | GET | /component/{id}| |  |
 | 22. 组件列表 |  GET | /components | offset:optional | 偏移位置, 默认 0 |
 |  |   | | limit:optional | 最大限量, 默认 10 |
 | 23. 编辑组件 | PUT | /component/{id}| name:required | 组件名称 |
-|  |  | | public:required | 是否公开(是1否0) |
+|  |  | | public:required | 是否公开(是:true/1否:false/0) |
 
 ### 认证方法
 

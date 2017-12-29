@@ -19,12 +19,16 @@ class ComponentController extends Controller
     public function createComponent(Request $request)
     {
         $name = trim($request->input('name', 'untitled'));
-        $public = trim($request->input('public', '0'));
+        $public = $request->input('public', 'false');
 
         $nameLen = mb_strlen($name, 'UTF-8');
 
         if ($nameLen <= 0 || $name > 100) {
             return Output::error(trans('common.invalid_component_name'), 60000, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if (!is_bool($public) && !is_numeric($public)) {
+            $public = strtolower($public) === 'true';
         }
 
         $public = intval(boolval($public));
@@ -195,6 +199,10 @@ class ComponentController extends Controller
         }
 
         if ('' !== $public) {
+            if (!is_bool($public) && !is_numeric($public)) {
+                $public = strtolower($public) === 'true';
+            }
+
             $public = intval(boolval($public));
             $data['access'] = "{$public}";
         }

@@ -40,12 +40,16 @@ class FileController extends Controller
     public function createFile(Request $request)
     {
         $name = trim($request->input('name', 'untitled'));
-        $public = trim($request->input('public', '0'));
+        $public = $request->input('public', 'false');
 
         $nameLen = mb_strlen($name, 'UTF-8');
 
         if ($nameLen <= 0 || $name > 100) {
             return Output::error(trans('common.invalid_file_name'), 30000, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if (!is_bool($public) && !is_numeric($public)) {
+            $public = strtolower($public) === 'true';
         }
 
         $public = intval(boolval($public));
@@ -107,7 +111,7 @@ class FileController extends Controller
         }
 
         $name = trim($request->input('name', ''));
-        $public = trim($request->input('public', ''));
+        $public = $request->input('public', '');
 
         if ($name == '' && $public == '') {
             return Output::error(trans('common.bad_request'), 30102, [], Response::HTTP_BAD_REQUEST);
@@ -122,6 +126,10 @@ class FileController extends Controller
         }
 
         if ('' !== $public) {
+            if (!is_bool($public) && !is_numeric($public)) {
+                $public = strtolower($public) === 'true';
+            }
+
             $public = intval(boolval($public));
             $data['access'] = "{$public}";
         }
