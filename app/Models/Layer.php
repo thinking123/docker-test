@@ -28,7 +28,7 @@ class Layer extends Base
     {
         $typeName = strtoupper($typeName);
 
-        return isset(static::TYPES[$typeName]) ? isset(static::TYPES[$typeName]) : null;
+        return isset(static::TYPES[$typeName]) ? static::TYPES[$typeName] : null;
     }
 
     /**
@@ -61,7 +61,7 @@ class Layer extends Base
             ->orderBy('position', 'DESC')->get()->toArray();
 
         if ($depth == 1 || empty($layers)) {
-            return $layers;
+            return static::filterLayers($layers);
         }
 
         $ids = [];
@@ -76,17 +76,13 @@ class Layer extends Base
             foreach ($layers as & $layer) {
                 foreach ($children as $parentId => $child) {
                     if ($layer['id'] == $parentId) {
-                        if (!isset($layer['children'])) {
-                            $layer['children'] = [];
-                        }
-
-                        $layer['children'][] = $child;
+                        $layer['children'] = $child;
                     }
                 }
             }
         }
 
-        return $layers;
+        return static::filterLayers($layers);
     }
 
     /**
@@ -165,7 +161,7 @@ class Layer extends Base
                 $data[$layer['parentId']] = [];
             }
 
-            $data[$layer['parentId']][] = static::filter($layer);
+            $data[$layer['parentId']][] = $layer;
         }
 
         return $data;
@@ -208,8 +204,6 @@ class Layer extends Base
 
         foreach ($layers as & $layer) {
             foreach ($children as $child) {
-                $child = static::filter($child);
-
                 if ($child['parentId'] == $layer['id']) {
                     if (isset($layer['children'])) {
                         $layer['children'] = [];
@@ -233,7 +227,7 @@ class Layer extends Base
     {
         $layer['type'] = static::getTypeNameById($layer['type']);
 
-        unset($layer['status']);
+        unset($layer['status'], $layer['referenceTo']);
 
         $layer['createdAt'] = strtotime($layer['createdAt']);
 
@@ -241,12 +235,25 @@ class Layer extends Base
             $layer['updatedAt'] = strtotime($layer['updatedAt']);
         }
 
-        if (isset($layer['children']) && empty($layer['children'])) {
-            foreach ($layer['children'] as & $child) {
-                $child = static::filter($child);
-            }
+        if (isset($layer['children']) && !empty($layer['children'])) {
+            $layer['children'] = static::filterLayers($layer['children']);
         }
 
         return $layer;
+    }
+
+    /**
+     * 格式化 layers
+     *
+     * @param array $layers
+     * @return array
+     */
+    public static function filterLayers($layers)
+    {
+        foreach ($layers as & $layer) {
+            $layer = static::filter($layer);
+        }
+
+        return $layers;
     }
 }
