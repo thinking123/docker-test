@@ -65,9 +65,14 @@ class Layer extends Base
         }
 
         $ids = [];
+        $referenceIds = [];
 
         foreach ($layers as $layer) {
-            $ids[] = $layer['id'];
+            if ($layer['type'] == Layer::getTypeIdByName('SLOT')) {
+                $referenceIds[] = $layer['referenceTo'];
+            } else {
+                $ids[] = $layer['id'];
+            }
         }
 
         $children = static::getLayerChildren($ids, $depth - 1);
@@ -75,8 +80,24 @@ class Layer extends Base
         if (!empty($children)) {
             foreach ($layers as & $layer) {
                 foreach ($children as $parentId => $child) {
-                    if ($layer['id'] == $parentId) {
+                    if ($layer['type'] != Layer::getTypeIdByName('slot') && $layer['id'] == $parentId) {
                         $layer['children'] = $child;
+                    }
+                }
+            }
+        }
+
+        $children = static::getComponentLayers($referenceIds, $depth - 1);
+
+        if (!empty($children)) {
+            foreach ($layers as & $layer) {
+                foreach ($children as $child) {
+                    if ($layer['type'] == Layer::getTypeIdByName('slot') && $layer['referenceTo'] == $child['componentId']) {
+                        if (!isset($layer['children'])) {
+                            $layer['children'] = [];
+                        }
+
+                        $layer['children'][] = $child;
                     }
                 }
             }
@@ -88,7 +109,7 @@ class Layer extends Base
     /**
      * 根据组件 id 获取其 layer
      *
-     * @param int $id
+     * @param int|array $id
      * @param int $depth
      * @return array
      */
@@ -98,8 +119,10 @@ class Layer extends Base
             return [];
         }
 
-        $layers = Layer::where('componentId', $id)->where('parentId', 0)->where('status', Layer::STATUS_NORMAL)
-            ->orderBy('position', 'DESC')->get()->toArray();
+        $componentIds = is_array($id) ? $id : [$id];
+
+        $layers = Layer::where('componentId', $componentIds)->where('parentId', 0)->where('status',
+            Layer::STATUS_NORMAL)->orderBy('position', 'DESC')->get()->toArray();
 
         if ($depth == 1 || empty($layers)) {
             return $layers;
@@ -117,11 +140,7 @@ class Layer extends Base
             foreach ($layers as & $layer) {
                 foreach ($children as $parentId => $child) {
                     if ($layer['id'] == $parentId) {
-                        if (!isset($layer['children'])) {
-                            $layer['children'] = [];
-                        }
-
-                        $layer['children'][] = $child;
+                        $layer['children'] = $child;
                     }
                 }
             }
