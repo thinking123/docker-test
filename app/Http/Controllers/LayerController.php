@@ -311,6 +311,7 @@ class LayerController extends Controller
         }
 
         $layers = Layer::getFileLayers($id);
+        $layers = Layer::filterLayers($layers);
 
         return Output::ok($layers);
     }
@@ -342,6 +343,7 @@ class LayerController extends Controller
         }
 
         $layers = Layer::getLayerChildren([$id]);
+        $layers = Layer::filterLayers($layers);
 
         return Output::ok($layers);
     }
@@ -471,6 +473,7 @@ class LayerController extends Controller
         }
 
         $layers = Layer::getComponentLayers($id);
+        $layers = Layer::filterLayers($layers);
 
         return Output::ok($layers);
     }

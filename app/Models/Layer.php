@@ -103,7 +103,7 @@ class Layer extends Base
             }
         }
 
-        return static::filterLayers($layers);
+        return $layers;
     }
 
     /**
@@ -146,7 +146,7 @@ class Layer extends Base
             }
         }
 
-        return static::filterLayers($layers);
+        return $layers;
     }
 
     /**
