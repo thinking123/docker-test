@@ -69,7 +69,9 @@ class Layer extends Base
 
         foreach ($layers as $layer) {
             if ($layer['type'] == Layer::getTypeIdByName('SLOT')) {
-                $referenceIds[] = $layer['referenceTo'];
+                if (is_numeric($layer['referenceTo'])) {
+                    $referenceIds[] = $layer['referenceTo'];
+                }
             } else {
                 $ids[] = $layer['id'];
             }
@@ -121,6 +123,10 @@ class Layer extends Base
 
         $componentIds = is_array($id) ? $id : [$id];
 
+        if (empty($componentIds)) {
+            return [];
+        }
+
         $layers = Layer::where('componentId', $componentIds)->where('parentId', 0)->where('status',
             Layer::STATUS_NORMAL)->orderBy('position', 'DESC')->get()->toArray();
 
@@ -162,25 +168,51 @@ class Layer extends Base
             return [];
         }
 
-        $layers = Layer::whereIn('parentId', $layerIds)->where('status', static::STATUS_NORMAL)
-            ->orderBy('position', 'DESC')->get()->toArray();
-
-        if (empty($layers)) {
+        $topLayers = Layer::whereIn('id', $layerIds)->where('status', static::STATUS_NORMAL)->get()->toArray();
+        if (empty($topLayers)) {
             return [];
         }
+
+        $layerIds = [];
+        $referenceIds = [];
+
+        foreach ($topLayers as $layer) {
+            if ($layer['type'] == Layer::getTypeIdByName('slot')) {
+                if (is_numeric($layer['referenceTo'])) {
+                    $referenceIds[] = $layer['referenceTo'];
+                }
+            } else {
+                $layerIds[] = $layer['id'];
+            }
+        }
+
+        if (empty($layerIds) && empty($referenceIds)) {
+            return [];
+        }
+
+        $layers = Layer::whereIn('parentId', $layerIds)->where('status', static::STATUS_NORMAL)
+            ->orderBy('position', 'DESC')->get()->toArray();
 
         if ($depth > 1) {
             $layers = static::getLayerMoreChildren($layers, $depth - 1, true);
         }
 
         $data = [];
-
         foreach ($layers as $layer) {
-            if (!isset($data[$layer['parentId']])) {
-                $data[$layer['parentId']] = [];
-            }
 
-            $data[$layer['parentId']][] = $layer;
+            $data[$layer['parentId']] = [$layer];
+        }
+
+        $layers = static::getComponentLayers($referenceIds, $depth - 1);
+
+        if (!empty($layers)) {
+            foreach ($topLayers as $topLayer) {
+                foreach ($layers as $layer) {
+                    if ($topLayer['referenceTo'] == $layer['componentId']) {
+                        $data[$topLayer['id']] = [$layer];
+                    }
+                }
+            }
         }
 
         return $data;

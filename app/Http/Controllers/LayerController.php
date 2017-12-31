@@ -343,7 +343,10 @@ class LayerController extends Controller
         }
 
         $layers = Layer::getLayerChildren([$id]);
-        $layers = Layer::filterLayers($layers);
+
+        foreach ($layers as &$layer) {
+            $layer = Layer::filterLayers($layer);
+        }
 
         return Output::ok($layers);
     }
