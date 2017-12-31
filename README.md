@@ -29,7 +29,7 @@
 | 13. 删除文件 | DELETE | /file/{id}|  |  |
 | 14. 创建 layer | POST | /file\\|component/{id}/layer | name:required | Layer 名称 |
 | |  |  | parent:required | 父 Layer id |
-| |  |  | before:required | 同级下一层 Layer 的 id |
+| |  |  | before:required | 同级下一层 Layer 的 id, 没有则传 0 |
 | |  |  | type:required | Layer 的类型 |
 | |  |  | data:optional | JSON 字符串 |
 | |  |  | styles:optional | JSON 字符串 |
