@@ -21,4 +21,5 @@ return [
     'magic_link_expired'      => 'This login verification has expired',
     'waiting_for_confirm'     => 'Confirmation incomplete',
     'component_not_found'     => 'Component not found',
+    'circular_reference'      => 'There is a circular reference',
 ];
