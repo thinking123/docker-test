@@ -146,7 +146,7 @@ class Layer extends Base
             }
         }
 
-        return $layers;
+        return static::filterLayers($layers);
     }
 
     /**
