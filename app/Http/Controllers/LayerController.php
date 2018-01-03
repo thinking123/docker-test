@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\TransformJob;
 use App\Models\Component;
 use App\Models\File;
 use App\Models\Layer;
@@ -500,5 +501,62 @@ class LayerController extends Controller
         $layers = Layer::filterLayers($layers);
 
         return Output::ok($layers);
+    }
+
+    /**
+     * layer 与 component 互转
+     *
+     * @param Request $request
+     * @param int $id layer id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function addTransform(Request $request, $id)
+    {
+        $layer = Layer::where('status', Layer::STATUS_NORMAL)->find($id);
+
+        if (is_null($layer)) {
+            return Output::error(trans('common.layer_not_found', ['param' => $id]), 50700, [],
+                Response::HTTP_BAD_REQUEST);
+        }
+
+        if (is_null($layer->fileId) && is_null($layer->componentId)) {
+            return Output::error(trans('common.server_is_busy'), 50701, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        if (!is_null($layer->fileId)) {
+            $file = File::where('id', $layer->fileId)->where('status', File::STATUS_NORMAL)->first();
+
+            if (is_null($file)) {
+                return Output::error(trans('common.server_is_busy'), 50702, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            if ($file->userId != $request->user()->id) {
+                return Output::error(trans('common.layer_not_found', ['param' => $id]), 50703, [],
+                    Response::HTTP_BAD_REQUEST);
+            }
+        } else {
+            $component = Component::where('id', $layer->componentId)->where('status',
+                Component::STATUS_NORMAL)->first();
+
+            if (is_null($component)) {
+                return Output::error(trans('common.server_is_busy'), 50704, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            if ($component->userId != $request->user()->id) {
+                return Output::error(trans('common.layer_not_found', ['param' => $id]), 50705, [],
+                    Response::HTTP_BAD_REQUEST);
+            }
+        }
+
+        $jobId = sha1(uniqid() . microtime(true) . $request->user()->id . rand(1, 99999999) . $id);
+
+        try {
+            $this->dispatch(new TransformJob($id, $jobId));
+        } catch (\Exception $e) {
+            static::log($e);
+            return Output::error(trans('common.server_is_busy'), 50706, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return Output::ok(['jobId' => $jobId]);
     }
 }
