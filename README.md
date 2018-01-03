@@ -50,6 +50,8 @@
 |  |   | | limit:optional | 最大限量, 默认 10 |
 | 23. 编辑组件 | PUT | /component/{id}| name:required | 组件名称 |
 |  |  | | public:required | 是否公开(是:true/1否:false/0) |
+| 24. Layer 与 Component 互转 | PUT | /layer/{id}/transform |  |  |
+
 
 ### 认证方法
 
