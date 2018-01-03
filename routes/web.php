@@ -68,5 +68,7 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
         $router->get('/component/{id:[0-9]+}/layers', 'LayerController@getComponentLayers');
 
         $router->put('/layer/{id:[0-9]+}/transform', 'LayerController@addTransform');
+
+        $router->get('/job/{id:[a-z0-9]+}', 'JobController@getJob');
     });
 });

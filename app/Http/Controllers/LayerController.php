@@ -157,15 +157,33 @@ class LayerController extends Controller
                 Response::HTTP_BAD_REQUEST);
         }
 
-        $file = File::where('id', $layer->fileId)->where('status', File::STATUS_NORMAL)->first();
-
-        if (is_null($file)) {
+        if (is_null($layer->fileId) && is_null($layer->componentId)) {
             return Output::error(trans('common.server_is_busy'), 50101, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        if ($file->userId != $request->user()->id) {
-            return Output::error(trans('common.layer_not_found', ['param' => $id]), 50102, [],
-                Response::HTTP_BAD_REQUEST);
+        if (!is_null($layer->fileId)) {
+            $file = File::where('id', $layer->fileId)->where('status', File::STATUS_NORMAL)->first();
+
+            if (is_null($file)) {
+                return Output::error(trans('common.server_is_busy'), 50102, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            if ($file->userId != $request->user()->id) {
+                return Output::error(trans('common.layer_not_found', ['param' => $id]), 50103, [],
+                    Response::HTTP_BAD_REQUEST);
+            }
+        } else {
+            $component = Component::where('id', $layer->componentId)->where('status',
+                Component::STATUS_NORMAL)->first();
+
+            if (is_null($component)) {
+                return Output::error(trans('common.server_is_busy'), 50104, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            if ($component->userId != $request->user()->id) {
+                return Output::error(trans('common.layer_not_found', ['param' => $id]), 50105, [],
+                    Response::HTTP_BAD_REQUEST);
+            }
         }
 
         $data = [
@@ -200,15 +218,33 @@ class LayerController extends Controller
                 Response::HTTP_BAD_REQUEST);
         }
 
-        $file = File::where('id', $layer->fileId)->where('status', File::STATUS_NORMAL)->first();
-
-        if (is_null($file)) {
+        if (is_null($layer->fileId) && is_null($layer->componentId)) {
             return Output::error(trans('common.server_is_busy'), 50201, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        if ($file->userId != $request->user()->id) {
-            return Output::error(trans('common.layer_not_found', ['param' => $id]), 50202, [],
-                Response::HTTP_BAD_REQUEST);
+        if (!is_null($layer->fileId)) {
+            $file = File::where('id', $layer->fileId)->where('status', File::STATUS_NORMAL)->first();
+
+            if (is_null($file)) {
+                return Output::error(trans('common.server_is_busy'), 50202, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            if ($file->userId != $request->user()->id) {
+                return Output::error(trans('common.layer_not_found', ['param' => $id]), 50203, [],
+                    Response::HTTP_BAD_REQUEST);
+            }
+        } else {
+            $component = Component::where('id', $layer->componentId)->where('status',
+                Component::STATUS_NORMAL)->first();
+
+            if (is_null($component)) {
+                return Output::error(trans('common.server_is_busy'), 50204, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            if ($component->userId != $request->user()->id) {
+                return Output::error(trans('common.layer_not_found', ['param' => $id]), 50205, [],
+                    Response::HTTP_BAD_REQUEST);
+            }
         }
 
         $inputs = $request->only(['name', 'parent', 'before', 'data', 'styles']);
