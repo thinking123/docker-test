@@ -557,6 +557,6 @@ class LayerController extends Controller
             return Output::error(trans('common.server_is_busy'), 50706, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return Output::ok(['jobId' => $jobId]);
+        return Output::ok(['job' => $jobId]);
     }
 }
