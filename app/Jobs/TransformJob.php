@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use Redis;
+
 class TransformJob extends Job
 {
     /**
@@ -35,6 +37,6 @@ class TransformJob extends Job
      */
     public function handle()
     {
-
+        Redis::set('job:' . $this->jobId, 'PENDING', 'EX', 3600);
     }
 }
