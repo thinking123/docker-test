@@ -190,17 +190,22 @@ class Layer extends Base
             return [];
         }
 
-        $layers = Layer::whereIn('parentId', $layerIds)->where('status', static::STATUS_NORMAL)
-            ->orderBy('position', 'DESC')->get()->toArray();
-
-        if ($depth > 1) {
-            $layers = static::getLayerMoreChildren($layers, $depth - 1);
-        }
-
         $data = [];
-        foreach ($layers as $layer) {
 
-            $data[$layer['parentId']] = [$layer];
+        if (!empty($layerIds)) {
+            $layers = Layer::whereIn('parentId', $layerIds)->where('status', static::STATUS_NORMAL)
+                ->orderBy('position', 'DESC')->get()->toArray();
+
+            if ($depth > 1) {
+                $layers = static::getLayerMoreChildren($layers, $depth - 1);
+            }
+
+            foreach ($layers as $layer) {
+                if (!isset($data[$layer['parentId']])) {
+                    $data[$layer['parentId']] = [];
+                }
+                $data[$layer['parentId']][] = $layer;
+            }
         }
 
         $layers = static::getComponentLayers($referenceIds, $depth - 1);
