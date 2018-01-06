@@ -351,6 +351,8 @@ class Layer extends Base
 
                 if (isset($data[$layer->id]) && !empty($data[$layer->id])) {
                     foreach ($data[$layer->id] as $layer) {
+                        $layer = json_decode(json_encode($layer));
+
                         $childSaved = static::layerToComponent($layer, $component, $componentLayer->id);
 
                         if (!$childSaved) {
@@ -364,5 +366,104 @@ class Layer extends Base
         }
 
         return false;
+    }
+
+    /**
+     * 转换 component 为普通 layer
+     *
+     * @param object $layer
+     * @param int $parentId
+     * @param int $fileId
+     * @return bool
+     */
+    public static function componentToLayer($layer, $parentId, $fileId)
+    {
+        $fileLayer = new static;
+
+        $fileLayer->name = $layer->name;
+        $fileLayer->type = $layer->type;
+        $fileLayer->fileId = $fileId;
+        $fileLayer->parentId = $parentId;
+        $fileLayer->position = $layer->position;
+        $fileLayer->data = $layer->data;
+        $fileLayer->styles = $layer->styles;
+        $fileLayer->status = static::STATUS_NORMAL;
+        $fileLayer->createdAt = date('Y-m-d H:i:s');
+
+        if (!$fileLayer->save()) {
+            return false;
+        }
+
+        $data = static::getLayerChildren([$layer->id], 1);
+
+        if (isset($data[$layer->id]) && !empty($data[$layer->id])) {
+            foreach ($data[$layer->id] as $layer) {
+                $layer = json_decode(json_encode($layer));
+
+                if ($layer->type == static::getTypeIdByName('slot')) {
+                    $childSaved = static::slotToGeneral($layer, $fileId, $fileLayer->id, true);
+                } else {
+                    $childSaved = static::componentToLayer($layer, $fileLayer->id, $fileLayer->fileId);
+                }
+
+                if (!$childSaved) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * 转换 slot 为普通 layer
+     *
+     * @param object $slot
+     * @param int $fileId
+     * @param int $parentId
+     * @param bool $clone
+     * @return bool
+     */
+    public static function slotToGeneral($slot, $fileId, $parentId = null, $clone = false)
+    {
+        $componentId = $slot->referenceTo;
+
+        $slot = static::find($slot->id);
+
+        if ($clone) {
+            $slot->id = null;
+            $slot->parentId = $parentId;
+        }
+
+        $slot->type = Layer::getTypeIdByName('SCREEN');
+        $slot->fileId = $fileId;
+        $slot->componentId = null;
+        $slot->referenceTo = null;
+        $slot->data = '{}';
+        $slot->updatedAt = date('Y-m-d H:i:s');
+
+        if (!$slot->save()) {
+            return false;
+        }
+
+        $layers = static::getComponentLayers($componentId, 1);
+
+        if (!empty($layers)) {
+            foreach ($layers as $layer) {
+                $layer = json_decode(json_encode($layer));
+
+                if ($layer->type == static::getTypeIdByName('slot')) {
+                    $childSaved = static::slotToGeneral($layer, $fileId, $slot->id, true);
+                } else {
+                    $childSaved = static::componentToLayer($layer, $slot->id, $slot->fileId);
+                }
+
+                if (!$childSaved) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

@@ -55,7 +55,7 @@ class TransformJob extends Job
             return;
         }
 
-        if ($layer->style === Layer::getTypeIdByName('slot')) {
+        if ($layer->type === Layer::getTypeIdByName('slot')) {
             $this->componentToLayer($layer);
         } else {
             $this->layerToComponent($layer);
@@ -69,7 +69,12 @@ class TransformJob extends Job
      */
     public function componentToLayer($layer)
     {
+        if (Layer::slotToGeneral($layer, $layer->fileId)) {
+            Redis::set('job:' . $this->jobId, 'SUCCESS', 'EX', 3600);
+            return;
+        }
 
+        Redis::set('job:' . $this->jobId, 'FAILED', 'EX', 3600);
     }
 
     /**

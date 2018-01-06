@@ -51,7 +51,7 @@
 | 23. 编辑组件 | PUT | /component/{id}| name:required | 组件名称 |
 |  |  | | public:required | 是否公开(是:true/1否:false/0) |
 | 24. Layer 与 Component 互转 | PUT | /layer/{id}/transform |  | 本接口用于 component 和 layer 的互相转换。确切的说，是 slot layer 与非 slot layer 之间的转换。URL 中的 id 为 layer 的 id。该操作是异步的，返回的数据中 job 为任务 ID，前端需要用该参数调用接口 25 以查询操作是否完成。 |
-| 25. 查询 JOB 状态 | GET | /job/{id}| | 该接口用于查询 JOB 完成情况。返回值中的 data[status] 表明 job 的五种状态：WAITING/PENDING/FAILED/SUCCESS/UNKNOWN. |
+| 25. 查询 JOB 状态 | GET | /job/{id}| | 该接口用于查询 JOB 完成情况。返回值中的 data[status] 包含五种状态：WAITING/PENDING/FAILED/SUCCESS/UNKNOWN. |
 
 
 ### 认证方法
