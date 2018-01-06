@@ -321,4 +321,48 @@ class Layer extends Base
 
         return $layers;
     }
+
+    /**
+     * 复制 layer 为 component
+     *
+     * @param object $layer
+     * @param object $component
+     * @param int $parentId
+     * @return bool
+     */
+    public static function layerToComponent($layer, $component, $parentId = 0)
+    {
+        $componentLayer = new static;
+
+        $componentLayer->name = $layer->name;
+        $componentLayer->type = $layer->type;
+        $componentLayer->componentId = $component->id;
+        $componentLayer->parentId = $parentId;
+        $componentLayer->position = $layer->position;
+        $componentLayer->referenceTo = $layer->referenceTo;
+        $componentLayer->data = $layer->data;
+        $componentLayer->styles = $layer->styles;
+        $componentLayer->status = static::STATUS_NORMAL;
+        $componentLayer->createdAt = date('Y-m-d H:i:s');
+
+        if ($saved = $componentLayer->save()) {
+            if ($componentLayer->type != static::getTypeIdByName('SLOT')) {
+                $data = static::getLayerChildren([$layer->id], 1);
+
+                if (isset($data[$layer->id]) && !empty($data[$layer->id])) {
+                    foreach ($data[$layer->id] as $layer) {
+                        $childSaved = static::layerToComponent($layer, $component, $componentLayer->id);
+
+                        if (!$childSaved) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
 }

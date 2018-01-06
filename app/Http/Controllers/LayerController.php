@@ -588,8 +588,8 @@ class LayerController extends Controller
         $jobId = sha1(uniqid() . microtime(true) . $request->user()->id . rand(1, 99999999) . $id);
 
         try {
-            $this->dispatch(new TransformJob($id, $jobId));
-            Redis::set('job:' . $jobId, 'PENDING', 'EX', 3600);
+            $this->dispatch(new TransformJob($id, $jobId, $request->user()->id));
+            Redis::set('job:' . $jobId, 'WAITING', 'EX', 3600);
         } catch (\Exception $e) {
             static::log($e);
             return Output::error(trans('common.server_is_busy'), 50706, [], Response::HTTP_INTERNAL_SERVER_ERROR);

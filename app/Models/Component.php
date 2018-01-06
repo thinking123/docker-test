@@ -27,7 +27,6 @@ class Component extends Base
      * @param int|null $teamId
      * @param string $access
      * @param string|null $createdAt
-     * @throws \Exception
      * @return Component|null
      */
     public static function createComponent(
