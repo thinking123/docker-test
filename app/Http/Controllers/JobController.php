@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Output;
 use Log;
+use Redis;
 use Illuminate\Http\Request;
 
 class JobController extends Controller
@@ -17,10 +18,17 @@ class JobController extends Controller
      */
     public function getJob(Request $request, $id)
     {
+        $key = 'job:' . $id;
+
+        $status = Redis::get($key);
+
+        if (is_null($status)) {
+            $status = 'UNKNOWN';
+        }
 
         $data = [
             'job'    => $id,
-            'status' => 'DONE'
+            'status' => $status
         ];
 
         return Output::ok($data);

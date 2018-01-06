@@ -589,7 +589,7 @@ class LayerController extends Controller
 
         try {
             $this->dispatch(new TransformJob($id, $jobId));
-            Redis::set('job:' . $jobId, 'WAITING', 'EX', 3600);
+            Redis::set('job:' . $jobId, 'PENDING', 'EX', 3600);
         } catch (\Exception $e) {
             static::log($e);
             return Output::error(trans('common.server_is_busy'), 50706, [], Response::HTTP_INTERNAL_SERVER_ERROR);
