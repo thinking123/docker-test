@@ -188,7 +188,7 @@ class LayerController extends Controller
         }
 
         $data = [
-            'parent'    => null,
+            'parentId'  => null,
             'position'  => null,
             'status'    => Layer::STATUS_DELETED,
             'updatedAt' => date('Y-m-d H:i:s')
