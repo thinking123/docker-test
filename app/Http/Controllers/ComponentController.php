@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use Output;
 use Log;
+use DB;
+use App\Models\File;
+use App\Models\Layer;
 use App\Models\Component;
+use App\Models\FileComponent;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -162,6 +166,74 @@ class ComponentController extends Controller
         return Output::ok([
             'components' => $components
         ]);
+    }
+
+    /**
+     * 获取文件相关组件列表
+     *
+     * @param Request $request
+     * @param int $id file id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getFileComponents(Request $request, $id)
+    {
+        $file = File::where('id', $id)->where('status', File::STATUS_NORMAL)->first();
+
+        if (is_null($file)) {
+            return Output::error(trans('common.file_not_found'), 60500, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($file->userId != $request->user()->id && $file->access != File::ACCESS_PUBLIC) {
+            return Output::error(trans('common.file_not_found'), 60501, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        $offset = (int)$request->input('offset', 0);
+        $limit = (int)$request->input('limit', Component::DEFAULT_LIST_COUNT);
+
+        $offset = $offset < 0 ? 0 : $offset;
+        $limit = ($offset < 0 || $offset > Component::DEFAULT_LIST_COUNT) ? Component::DEFAULT_LIST_COUNT : $limit;
+
+        $builder = FileComponent::where('FileComponent.fileId', $id)
+            ->where('FileComponent.status', FileComponent::STATUS_NORMAL)
+            ->leftJoin('Component', 'Component.id', '=', 'FileComponent.componentId')
+            ->select(DB::raw('DISTINCT FileComponent.componentId AS id, Component.*'))
+            ->orderBy('FileComponent.componentId', 'DESC');
+
+        if ($offset > 0) {
+            $builder->where('Component.id', '<', $offset);
+        }
+
+        $components = $builder->limit($limit)->get()->toArray();
+
+        if (empty($components)) {
+            return Output::ok([]);
+        }
+
+        foreach ($components as & $component) {
+            $component['access'] = $component['access'] == 1 ? 'PUBLIC' : 'PRIVATE';
+            $component['createdAt'] = strtotime($component['createdAt']);
+            $component['updatedAt'] = is_null($component['updatedAt']) ? null : strtotime($component['updatedAt']);
+
+            unset($component['status']);
+        }
+
+        $components = array_column($components, null, 'id');
+        $componentIds = array_keys($components);
+
+        foreach ($componentIds as $componentId) {
+            $component = Component::where('id', $componentId)->where('status', Component::STATUS_NORMAL)->first();
+
+            if (is_null($component)) {
+                return Output::error(trans('common.component_not_found'), 60502, [], Response::HTTP_BAD_REQUEST);
+            }
+
+            $layers = Layer::getComponentLayers($componentId);
+            $layers = Layer::filterLayers($layers);
+
+            $components[$componentId]['children'] = $layers;
+        }
+
+        return Output::ok(array_values($components));
     }
 
     /**
