@@ -151,6 +151,8 @@ class LayerController extends Controller
                     throw new \Exception('Save file-component relationship failed.');
                 }
             }
+
+            DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
             self::log($e);
