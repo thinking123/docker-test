@@ -320,24 +320,46 @@ class LayerController extends Controller
         $afterPosition = is_null($after) ? $beforePosition + 10 : $after->position;
 
         $data = [
-            'name'      => $inputs['name'],
-            'parentId'  => $inputs['parent'],
-            'position'  => ($beforePosition + $afterPosition) / 2,
-            'data'      => isset($inputs['data']) && !is_null(json_decode($inputs['data'])) ? $inputs['data'] : '{}',
-            'styles'    => isset($inputs['styles']) && !is_null(json_decode($inputs['styles'])) ? $inputs['styles'] : '{}',
-            'updatedAt' => date('Y-m-d H:i:s')
+            'name'        => $inputs['name'],
+            'parentId'    => $inputs['parent'],
+            'position'    => ($beforePosition + $afterPosition) / 2,
+            'data'        => '{}',
+            'referenceTo' => null,
+            'styles'      => isset($inputs['styles']) && !is_null(json_decode($inputs['styles'])) ? $inputs['styles'] : '{}',
+            'updatedAt'   => date('Y-m-d H:i:s')
         ];
+
+        if (isset($inputs['data']) && !is_null($inputData = json_decode($inputs['data'], true))) {
+            $data['data'] = $inputs['data'];
+
+            if ($layer->type == Layer::getTypeIdByName('slot') && isset($inputData['referenceTo']) && is_numeric($inputData['referenceTo'])) {
+                $inputData['referenceTo'] = intval($inputData['referenceTo']);
+
+                if ($id == $inputData['referenceTo']) {
+                    return Output::error(trans('common.illegal_operation'), 50208, [], Response::HTTP_BAD_REQUEST);
+                }
+
+                $component = Component::where('status', Component::STATUS_NORMAL)->find($inputData['referenceTo']);
+
+                if (is_null($component) || $component->userId != $request->user()->id) {
+                    return Output::error(trans('common.component_not_found'), 50209, [], Response::HTTP_BAD_REQUEST);
+                }
+
+                $data['referenceTo'] = $inputData['referenceTo'];
+            }
+        }
+
 
         $affected = Layer::where('id', $id)->where('status', Layer::STATUS_NORMAL)->update($data);
 
         if ($affected == 0) {
-            return Output::error(trans('common.server_is_busy'), 50208, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Output::error(trans('common.server_is_busy'), 50210, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         $layer = Layer::where('status', Layer::STATUS_NORMAL)->find($layer->id)->toArray();
 
         if (is_null($layer)) {
-            return Output::error(trans('common.server_is_busy'), 50209, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Output::error(trans('common.server_is_busy'), 50211, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return Output::ok(Layer::filter($layer));
