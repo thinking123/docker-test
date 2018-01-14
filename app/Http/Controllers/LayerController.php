@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Jobs\TransformJob;
 use App\Models\Component;
 use App\Models\File;
+use App\Models\FileComponent;
 use App\Models\Layer;
+use DB;
 use Output;
 use Log;
 use Validator;
@@ -129,7 +131,30 @@ class LayerController extends Controller
         $layer->status = Layer::STATUS_NORMAL;
         $layer->createdAt = date('Y-m-d H:i:s');
 
-        if (!$layer->save()) {
+        DB::beginTransaction();
+
+        try {
+            if (!$layer->save()) {
+                throw new \Exception('Save layer failed.');
+            }
+
+            if (!is_null($layer->referenceTo)) {
+
+                $fc = new FileComponent();
+
+                $fc->fileId = $id;
+                $fc->layerId = $layer->id;
+                $fc->componentId = $layer->referenceTo;
+                $fc->status = FileComponent::STATUS_NORMAL;
+
+                if (!$fc->save()) {
+                    throw new \Exception('Save file-component relationship failed.');
+                }
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            self::log($e);
+
             return Output::error(trans('common.server_is_busy'), 50007, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
@@ -314,6 +339,7 @@ class LayerController extends Controller
             ->where('parentId', $inputs['parent'])
             ->where('position', '>', $beforePosition)
             ->where('status', Layer::STATUS_NORMAL)
+            ->where('id', '!=', $id)
             ->orderBy('position', 'ASC')
             ->first();
 
