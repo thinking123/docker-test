@@ -51,7 +51,7 @@ class Layer extends Base
      * @param int $depth
      * @return array
      */
-    public static function getFileLayers($id, $depth = 5)
+    public static function getFileLayers($id, $depth = 999)
     {
         if ($depth < 1) {
             return [];
@@ -162,7 +162,7 @@ class Layer extends Base
      * @param int $depth
      * @return array
      */
-    public static function getLayerChildren(array $layerIds, $depth = 5)
+    public static function getLayerChildren(array $layerIds, $depth = 999)
     {
         if (empty($layerIds) && $depth < 1) {
             return [];
