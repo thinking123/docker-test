@@ -377,10 +377,38 @@ class LayerController extends Controller
             }
         }
 
+        try {
+            $affected = Layer::where('id', $id)->where('status', Layer::STATUS_NORMAL)->update($data);
 
-        $affected = Layer::where('id', $id)->where('status', Layer::STATUS_NORMAL)->update($data);
+            if ($affected == 0) {
+                throw new \Exception('Update layer failed');
+            }
 
-        if ($affected == 0) {
+            if (!is_null($layer->fileId)) {
+                if (!is_null($layer->referenceTo) && $layer->referenceTo != $data['referenceTo']) {
+                    FileComponent::where('layerId', $layer->id)->where('componentId', $layer->referenceTo)
+                        ->update(['status' => FileComponent::STATUS_DELETED]);
+                }
+
+                if (!is_null($data['referenceTo']) && $layer->referenceTo != $data['referenceTo']) {
+                    $params = [
+                        $layer->fileId,
+                        $id,
+                        $data['referenceTo'],
+                        FileComponent::STATUS_NORMAL,
+                        FileComponent::STATUS_NORMAL
+                    ];
+
+                    DB::statement("INSERT INTO `FileComponent` (`fileId`, `layerId`, `componentId`, `status`) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE `status` = ?",
+                        $params);
+                }
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            self::log($e);
+
             return Output::error(trans('common.server_is_busy'), 50210, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
