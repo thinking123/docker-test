@@ -273,12 +273,26 @@ class LayerController extends Controller
         }
 
         if ($inputs['parent'] > 0) {
+            if ($inputs['parent'] == $id) {
+                return Output::error(trans('common.server_is_busy'), 50204, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
             $parent = Layer::where('fileId', $layer->fileId)->where('status',
                 Layer::STATUS_NORMAL)->find($inputs['parent']);
 
             if (is_null($parent)) {
-                return Output::error(trans('common.layer_not_found', ['param' => $inputs['parent']]), 50204, [],
+                return Output::error(trans('common.layer_not_found', ['param' => $inputs['parent']]), 50205, [],
                     Response::HTTP_BAD_REQUEST);
+            }
+        } elseif ($inputs['parent'] == 0) {
+            if (!is_null($layer->componentId)) {
+                $topCnt = Layer::where('componentId', $layer->componentId)->where('status', Layer::STATUS_NORMAL)
+                    ->where('parentId', 0)->where('id', '!=', $id)->count();
+
+                if ($topCnt > 0) {
+                    return Output::error(trans('common.illegal_operation', ['param' => $inputs['parent']]), 50206, [],
+                        Response::HTTP_BAD_REQUEST);
+                }
             }
         }
 
@@ -289,7 +303,7 @@ class LayerController extends Controller
                 Layer::STATUS_NORMAL)->find($inputs['before']);
 
             if (is_null($before)) {
-                return Output::error(trans('common.layer_not_found', ['param' => $inputs['before']]), 50205, [],
+                return Output::error(trans('common.layer_not_found', ['param' => $inputs['before']]), 50207, [],
                     Response::HTTP_BAD_REQUEST);
             }
         }
@@ -317,13 +331,13 @@ class LayerController extends Controller
         $affected = Layer::where('id', $id)->where('status', Layer::STATUS_NORMAL)->update($data);
 
         if ($affected == 0) {
-            return Output::error(trans('common.server_is_busy'), 50206, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Output::error(trans('common.server_is_busy'), 50208, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         $layer = Layer::where('status', Layer::STATUS_NORMAL)->find($layer->id)->toArray();
 
         if (is_null($layer)) {
-            return Output::error(trans('common.server_is_busy'), 50207, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Output::error(trans('common.server_is_busy'), 50209, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return Output::ok(Layer::filter($layer));
@@ -443,6 +457,14 @@ class LayerController extends Controller
                 return Output::error(trans('common.illegal_operation', ['param' => $inputs['parent']]), 50503, [],
                     Response::HTTP_BAD_REQUEST);
             }
+        } elseif ($inputs['parent'] == 0) {
+            $topCnt = Layer::where('componentId', $id)->where('status', Layer::STATUS_NORMAL)->where('parentId',
+                0)->count();
+
+            if ($topCnt > 0) {
+                return Output::error(trans('common.illegal_operation', ['param' => $inputs['parent']]), 50504, [],
+                    Response::HTTP_BAD_REQUEST);
+            }
         }
 
         $before = null;
@@ -452,7 +474,7 @@ class LayerController extends Controller
                 Layer::STATUS_NORMAL)->find($inputs['before']);
 
             if (is_null($before)) {
-                return Output::error(trans('common.layer_not_found', ['param' => $inputs['before']]), 50504, [],
+                return Output::error(trans('common.layer_not_found', ['param' => $inputs['before']]), 50505, [],
                     Response::HTTP_BAD_REQUEST);
             }
         }
@@ -486,12 +508,12 @@ class LayerController extends Controller
                 $data['referenceTo'] = intval($data['referenceTo']);
 
                 if ($id == $data['referenceTo']) {
-                    return Output::error(trans('common.illegal_operation'), 50505, [], Response::HTTP_BAD_REQUEST);
+                    return Output::error(trans('common.illegal_operation'), 50506, [], Response::HTTP_BAD_REQUEST);
                 }
 
                 $component = Component::where('status', Component::STATUS_NORMAL)->find($data['referenceTo']);
                 if (is_null($component) || $component->userId != $request->user()->id) {
-                    return Output::error(trans('common.component_not_found'), 50506, [], Response::HTTP_BAD_REQUEST);
+                    return Output::error(trans('common.component_not_found'), 50507, [], Response::HTTP_BAD_REQUEST);
                 }
 
                 $layer->referenceTo = $data['referenceTo'];
@@ -503,7 +525,7 @@ class LayerController extends Controller
         $layer->createdAt = date('Y-m-d H:i:s');
 
         if (!$layer->save()) {
-            return Output::error(trans('common.server_is_busy'), 50507, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Output::error(trans('common.server_is_busy'), 50508, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         $layer = Layer::where('componentId', $id)->where('status', Layer::STATUS_NORMAL)->find($layer->id)->toArray();
