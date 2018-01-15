@@ -240,7 +240,7 @@ class ComponentController extends Controller
             $layers = Layer::getComponentLayers($componentId);
             $layers = Layer::filterLayers($layers);
 
-            $components[$componentId]['layer'] = $layers;
+            $components[$componentId]['layer'] = empty($layers) ? null : $layers[0];
         }
 
         return Output::ok(array_values($components));
