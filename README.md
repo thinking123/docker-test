@@ -42,7 +42,7 @@
 | 17. 获取文件或组件顶层 layer | GET | /file\\|component/{id}/layers |  |  |
 | 17. 获取 layer 后代 | GET | /layer/{id}/layers |  |  |
 | 18. 创建 Team | POST | /team | name:required | 团队名称 |
-| 19. 创建组件 |  POST | /component| name:optional | 组件名称 |
+| 19. 创建组件 |  POST | /file/{id}/component| name:optional | 组件名称 |
 | |  | | public:optional | 是否公开(是:true/1否:false/0) |
 | 20. 删除组件 | DELETE | /component/{id}|  |  |
 | 21. 获取组件 | GET | /component/{id}| |  |

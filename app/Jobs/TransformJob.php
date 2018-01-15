@@ -87,7 +87,7 @@ class TransformJob extends Job
         $name = 'Untitled';
 
         try {
-            $component = Component::createComponent($name, $this->sponsor, null, Component::ACCESS_PRIVATE);
+            $component = Component::createComponent($name, $this->sponsor, null, Component::ACCESS_PRIVATE, $layer->fileId);
 
             if (is_null($component)) {
                 throw new \Exception('Transform slot layer ' . $this->layerId . ' failed');

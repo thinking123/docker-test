@@ -26,6 +26,7 @@ class Component extends Base
      * @param int $userId
      * @param int|null $teamId
      * @param string $access
+     * @param int $fileId
      * @param string|null $createdAt
      * @return Component|null
      */
@@ -34,6 +35,7 @@ class Component extends Base
         $userId,
         $teamId = null,
         $access = Component::ACCESS_PUBLIC,
+        $fileId = NULL,
         $createdAt = null
     ) {
         $component = new static;
@@ -41,6 +43,7 @@ class Component extends Base
         $component->name = $name;
         $component->userId = $userId;
         $component->teamId = $teamId ? $teamId : null;
+        $component->fileId = $fileId;
         $component->access = "{$access}";
         $component->createdAt = !is_null($createdAt) ? $createdAt : date('Y-m-d H:i:s');
 

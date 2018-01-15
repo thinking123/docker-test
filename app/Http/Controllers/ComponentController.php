@@ -18,17 +18,28 @@ class ComponentController extends Controller
      * 新建组件
      *
      * @param Request $request
+     * @param int $id File ID
      * @return \Illuminate\Http\JsonResponse
      */
-    public function createComponent(Request $request)
+    public function createComponent(Request $request, $id)
     {
+        $file = File::where('id', $id)->where('status', File::STATUS_NORMAL)->first();
+
+        if (is_null($file)) {
+            return Output::error(trans('common.file_not_found'), 60000, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($file->userId != $request->user()->id) {
+            return Output::error(trans('common.illegal_operation'), 60001, [], Response::HTTP_BAD_REQUEST);
+        }
+
         $name = trim($request->input('name', 'untitled'));
         $public = $request->input('public', 'false');
 
         $nameLen = mb_strlen($name, 'UTF-8');
 
         if ($nameLen <= 0 || $name > 100) {
-            return Output::error(trans('common.invalid_component_name'), 60000, [], Response::HTTP_BAD_REQUEST);
+            return Output::error(trans('common.invalid_component_name'), 60002, [], Response::HTTP_BAD_REQUEST);
         }
 
         if (!is_bool($public) && !is_numeric($public)) {
@@ -38,10 +49,10 @@ class ComponentController extends Controller
         $public = intval(boolval($public));
 
         try {
-            $component = Component::createComponent($name, $request->user()->id, null, $public);
+            $component = Component::createComponent($name, $request->user()->id, null, $public, $id);
         } catch (\Exception $e) {
             static::log($e);
-            return Output::error(trans('common.server_is_busy'), 60001, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Output::error(trans('common.server_is_busy'), 60003, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         if (is_null($component)) {
@@ -55,7 +66,7 @@ class ComponentController extends Controller
                 ]
             ]);
 
-            return Output::error(trans('common.server_is_busy'), 60002, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Output::error(trans('common.server_is_busy'), 60004, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         $component = [
@@ -64,6 +75,7 @@ class ComponentController extends Controller
             'userId'    => $component->userId,
             'teamId'    => $component->teamId,
             'access'    => $component->access == 1 ? 'PUBLIC' : 'PRIVATE',
+            'fileId'    => intval($id),
             'editable'  => $component->userId == $request->user()->id,
             'deletable' => $component->userId == $request->user()->id,
             'createdAt' => strtotime($component->createdAt),
