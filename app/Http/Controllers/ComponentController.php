@@ -205,14 +205,12 @@ class ComponentController extends Controller
         $offset = $offset < 0 ? 0 : $offset;
         $limit = ($offset < 0 || $offset > Component::DEFAULT_LIST_COUNT) ? Component::DEFAULT_LIST_COUNT : $limit;
 
-        $builder = FileComponent::where('FileComponent.fileId', $id)
-            ->where('FileComponent.status', FileComponent::STATUS_NORMAL)
-            ->leftJoin('Component', 'Component.id', '=', 'FileComponent.componentId')
-            ->select(DB::raw('DISTINCT FileComponent.componentId AS id, Component.*'))
-            ->orderBy('FileComponent.componentId', 'DESC');
+        $builder = Component::where('fileId', $id)
+            ->where('status', Component::STATUS_NORMAL)
+            ->orderBy('id', 'DESC');
 
         if ($offset > 0) {
-            $builder->where('Component.id', '<', $offset);
+            $builder->where('id', '<', $offset);
         }
 
         $components = $builder->limit($limit)->get()->toArray();
