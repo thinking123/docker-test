@@ -72,5 +72,13 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
         $router->post('/layer/{id:[0-9]+}/transform', 'LayerController@addTransform');
 
         $router->get('/job/{id:[a-z0-9]+}', 'JobController@getJob');
+
+        $router->post('/file/{id}/designToken', 'DesignTokenController@createDesignToken');
+
+        $router->get('/file/{id}/designTokens', 'DesignTokenController@getDesignTokens');
+
+        $router->put('/designToken/{id}', 'DesignTokenController@updateDesignToken');
+
+        $router->delete('/designToken/{id}', 'DesignTokenController@deleteDesignToken');
     });
 });

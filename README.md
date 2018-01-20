@@ -55,6 +55,9 @@
 | 26. 查询文件相关组件列表 | GET | /file/{id}/components| | 该接口用于查询文件相关组件列表 |
 |  |  | | offset:optional | 偏移位置, 默认 0 |
 |  |  | | limit:optional | 最大限量, 默认 10 |
+| 27. 创建文件的 Design Token | POST | /file/{id}/designToken| | 该接口用于创建文件相关的 design token |
+|  |  | | name:optional | 名称, 默认 Untitled |
+|  |  | | value:optional | 值, 默认为空字符串 |
 
 
 ### 认证方法
