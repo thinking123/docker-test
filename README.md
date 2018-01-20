@@ -61,6 +61,9 @@
 | 28. 查询文件相关 Design Token 列表 | GET | /file/{id}/designTokens | | 该接口用于查询文件相关 design token 列表 |
 |  |  | | offset:optional | 偏移位置, 默认 0 |
 |  |  | | limit:optional | 最大限量, 默认 10 |
+| 29. 更新 Design Token | PUT | /designToken/{id} | | 该接口用于更新 design token |
+|  |  | | name:optional | 名称, 默认 Untitled |
+|  |  | | value:optional | 值, 默认为空字符串 |
 
 
 ### 认证方法
