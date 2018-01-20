@@ -139,4 +139,44 @@ class DesignTokenController extends Controller
 
         return Output::ok($dt);
     }
+
+    /**
+     * 删除 Design Token
+     *
+     * @param Request $request
+     * @param $id design token id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteDesignToken(Request $request, $id)
+    {
+        $dt = DesignToken::where('id', $id)->where('status', DesignToken::STATUS_NORMAL)->first();
+
+        if (is_null($dt)) {
+            return Output::error(trans('common.design_token_not_found'), 70300, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($dt->userId != $request->user()->id) {
+            return Output::error(trans('common.illegal_operation'), 70301, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        $data = [
+            'status'    => DesignToken::STATUS_DELETED,
+            'updatedAt' => date('Y-m-d H:i:s')
+        ];
+
+        try {
+            $affected = DesignToken::where('id', $id)
+                ->where('userId', $request->user()->id)
+                ->where('status', DesignToken::STATUS_NORMAL)->update($data);
+        } catch (\Exception $e) {
+            static::log($e);
+            return Output::error(trans('common.server_is_busy'), 70302, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        if ($affected > 0) {
+            return Output::ok();
+        }
+
+        return Output::error(trans('common.operation_failed'), 70303);
+    }
 }

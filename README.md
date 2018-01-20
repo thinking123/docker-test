@@ -64,6 +64,7 @@
 | 29. 更新 Design Token | PUT | /designToken/{id} | | 该接口用于更新 design token |
 |  |  | | name:optional | 名称, 默认 Untitled |
 |  |  | | value:optional | 值, 默认为空字符串 |
+| 30. 删除 Design Token | DELETE | /designToken/{id}|  | 该接口用于删除 Design Token |
 
 
 ### 认证方法
