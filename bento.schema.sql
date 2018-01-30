@@ -3,15 +3,15 @@
 
  Source Server         : bento
  Source Server Type    : MySQL
- Source Server Version : 50720
- Source Host           : 127.0.0.1
+ Source Server Version : 50714
+ Source Host           : 35.200.10.25
  Source Database       : bento_dev
 
  Target Server Type    : MySQL
- Target Server Version : 50720
+ Target Server Version : 50714
  File Encoding         : utf-8
 
- Date: 01/21/2018 00:34:43 AM
+ Date: 01/30/2018 17:55:34 PM
 */
 
 SET NAMES utf8mb4;
@@ -34,7 +34,7 @@ CREATE TABLE `Component` (
   PRIMARY KEY (`id`),
   KEY `idx_userId` (`userId`),
   KEY `idx_teamId` (`teamId`)
-) ENGINE=InnoDB AUTO_INCREMENT=135 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `DesignToken`
@@ -50,7 +50,7 @@ CREATE TABLE `DesignToken` (
   `createdAt` datetime NOT NULL COMMENT '生成时间',
   `updatedAt` datetime DEFAULT NULL COMMENT '最后更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `File`
@@ -68,7 +68,7 @@ CREATE TABLE `File` (
   PRIMARY KEY (`id`),
   KEY `idx_userId` (`userId`),
   KEY `idx_teamId` (`teamId`)
-) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `FileComponent`
@@ -83,7 +83,7 @@ CREATE TABLE `FileComponent` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_layerId_componentId` (`layerId`,`componentId`),
   KEY `idx_fileId` (`fileId`)
-) ENGINE=InnoDB AUTO_INCREMENT=243 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `Layer`
@@ -107,7 +107,7 @@ CREATE TABLE `Layer` (
   UNIQUE KEY `uniq_parentId_position` (`parentId`,`position`,`fileId`,`componentId`) USING BTREE,
   KEY `idx_fileId` (`fileId`),
   KEY `idx_componentId` (`componentId`)
-) ENGINE=InnoDB AUTO_INCREMENT=66918 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `Team`
@@ -123,7 +123,7 @@ CREATE TABLE `Team` (
   `updatedAt` timestamp NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
   KEY `idx_ownerId` (`ownerId`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `TeamUser`
@@ -139,7 +139,7 @@ CREATE TABLE `TeamUser` (
   PRIMARY KEY (`id`),
   KEY `idx_userId` (`userId`),
   KEY `idx_teamId` (`teamId`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `Token`
@@ -161,7 +161,7 @@ CREATE TABLE `Token` (
   UNIQUE KEY `uniq_refreshToken` (`refreshToken`) USING HASH,
   UNIQUE KEY `uniq_accessToken` (`accessToken`) USING HASH,
   KEY `idx_userId` (`userId`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `User`
@@ -173,13 +173,13 @@ CREATE TABLE `User` (
   `givenName` varchar(60) DEFAULT NULL COMMENT '用户的名',
   `familyName` varchar(60) DEFAULT NULL COMMENT '用户的姓',
   `avatar` varchar(255) DEFAULT NULL COMMENT '头像地址',
-  `email` varchar(255) DEFAULT NULL COMMENT '电子邮件地址',
+  `email` varchar(255) NOT NULL COMMENT '电子邮件地址',
   `googleId` varchar(21) DEFAULT NULL COMMENT 'Google ID',
   `salt` varchar(40) NOT NULL,
   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_googleId` (`googleId`)
+  UNIQUE KEY `uniq_email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;
