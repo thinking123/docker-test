@@ -396,7 +396,7 @@ class IndexController extends Controller
             return Output::error(trans('common.server_is_busy'), 10602, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        if (!Redis::expire($key, config('app.quick_login_max_lifetime'))) {
+        if (!Redis::expire($key, 10 * config('app.quick_login_max_lifetime'))) {
             Redis::del($key);
             return Output::error(trans('common.server_is_busy'), 10603, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -445,5 +445,75 @@ class IndexController extends Controller
         }
 
         return Output::ok();
+    }
+
+    /**
+     * quick login
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function quickLogin(Request $request)
+    {
+        $inputs = $request->only(['email', 'token']);
+
+        $rules = [
+            'email' => 'required|email',
+            'token' => 'required'
+        ];
+
+        $messages = [
+            'email.required' => trans('common.param_required', ['param' => 'email']),
+            'email.email'    => trans('common.invalid_email_address', ['param' => 'email']),
+            'token.required' => trans('common.param_required', ['param' => 'token']),
+        ];
+
+        $validator = Validator::make($inputs, $rules, $messages);
+
+        if ($validator->fails()) {
+            return Output::error($validator->errors()->first(), 10700, $inputs, Response::HTTP_BAD_REQUEST);
+        }
+
+        $key = 'quickLoginToken:' . $inputs['token'];
+
+        try {
+            $quickLoginData = Redis::hGetAll($key);
+        } catch (\Exception $e) {
+            return Output::error(trans('common.server_is_busy'), 10701, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        if (!isset($quickLoginData['email']) || $quickLoginData['email'] !== $inputs['email']) {
+            return Output::error(trans('common.magic_link_expired'), 10702, [], Response::HTTP_BAD_REQUEST);
+        }
+
+        if (Redis::del($key) != 1) {
+            return Output::error(trans('common.server_is_busy'), 10703, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $username = explode('@', $quickLoginData['email'])[0];
+
+        $user = User::newOrUpdateGoogleUser(null, $quickLoginData['email'], $username, null, null, null);
+
+        if (false === $user) {
+            return Output::error(trans('common.server_is_busy'), 10704, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $agent = $request->header('user-agent', '');
+
+        try {
+            $token = Token::genToken($user->id, $user->salt, $agent, $request->getClientIp());
+        } catch (\Exception $e) {
+            static::log($e);
+            return Output::error($e->getMessage(), 10705, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $data = [
+            'accessToken'           => $token->accessToken,
+            'refreshToken'          => $token->refreshToken,
+            'accessTokenExpiredAt'  => strtotime($token->accessTokenExpiredAt),
+            'refreshTokenExpiredAt' => strtotime($token->refreshTokenExpiredAt)
+        ];
+
+        return Output::ok($data);
     }
 }

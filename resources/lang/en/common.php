@@ -24,4 +24,5 @@ return [
     'circular_reference'        => 'There is a circular reference',
     'invalid_design_token_name' => 'Invalid design token name',
     'design_token_not_found'    => 'Design token not found',
+    'quick_login_link_expired'  => 'This login verification has expired',
 ];
