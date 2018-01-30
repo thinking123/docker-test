@@ -360,4 +360,82 @@ class IndexController extends Controller
 
         return Output::ok();
     }
+
+    /**
+     * 发送一个 quick login link
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function createQuickLink(Request $request)
+    {
+        $email = trim($request->input('email', ''));
+
+        if ('' === $email) {
+            return Output::error(trans('common.param_required', ['param' => 'email']), 10600);
+        }
+
+        $data = [
+            'email' => $email
+        ];
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return Output::error(trans('common.invalid_email_address', ['param' => $email]), 10601, $data);
+        }
+
+        $quickLoginToken = sha1($email . uniqid() . microtime(true));
+
+        $key = 'quickLoginToken:' . $quickLoginToken;
+
+        $quickLoginData = [
+            'email' => $email
+        ];
+
+        if ('OK' != Redis::hMset($key, $quickLoginData)) {
+            return Output::error(trans('common.server_is_busy'), 10602, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        if (!Redis::expire($key, config('app.quick_login_max_lifetime'))) {
+            Redis::del($key);
+            return Output::error(trans('common.server_is_busy'), 10603, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $params = [
+            'email' => $email,
+            'token' => $quickLoginToken
+        ];
+
+        $username = explode('@', $email)[0];
+        $link = 'https://app.makebento.com/verification?' . http_build_query($params);
+
+        $from = new Email('Bento', "noreply@makebento.com");
+        $to = new Email($username, $email);
+        $subject = 'Bento Login Verification';
+        $content = new Content("text/html", ' ');
+
+        $mail = new Mail($from, $subject, $to, $content);
+
+        /**
+         * @see https://github.com/sendgrid/sendgrid-php/blob/master/USE_CASES.md#transactional-templates
+         */
+        $mail->setTemplateId('19a3677a-1359-41de-859a-5228450c3b29');
+        $mail->personalization[0]->addSubstitution("-username-", $username);
+        $mail->personalization[0]->addSubstitution("-location-", 'Shanghai, China');
+        $mail->personalization[0]->addSubstitution("-link-", $link);
+
+        $sg = new SendGrid(config('app.sendgrid_api_key'));
+
+        try {
+            $response = $sg->client->mail()->send()->post($mail);
+        } catch (\Exception $e) {
+            static::log($e);
+            return Output::error(trans('common.server_is_busy'), 10604, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        if (202 != $response->statusCode()) {
+            return Output::error(trans('common.server_is_busy'), 10605, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return Output::ok();
+    }
 }

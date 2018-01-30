@@ -21,6 +21,8 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
 
     $router->put('/magic', 'IndexController@confirmMagicLogin');
 
+    $router->post('/quick', 'IndexController@createQuickLink');
+
     $router->group(['middleware' => ['auth']], function () use ($router) {
 
         $router->put('/token', 'IndexController@refreshAccessToken');
