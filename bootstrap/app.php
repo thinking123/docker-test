@@ -90,6 +90,7 @@ $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(App\Providers\OutputServiceProvider::class);
 $app->register(Barryvdh\Cors\ServiceProvider::class);
 $app->register(Illuminate\Redis\RedisServiceProvider::class);
+$app->register(Victorybiz\GeoIPLocation\GeoIPLocationServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

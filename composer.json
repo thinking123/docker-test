@@ -15,7 +15,8 @@
     "google/apiclient": "~2.2",
     "barryvdh/laravel-cors": "0.10.*",
     "illuminate/redis": "~5.5",
-    "sendgrid/sendgrid": "~6.0"
+    "sendgrid/sendgrid": "~6.0",
+    "victorybiz/geoip-location": "~1.0"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",

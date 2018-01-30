@@ -13,6 +13,7 @@ use SendGrid;
 use SendGrid\Mail;
 use SendGrid\Email;
 use SendGrid\Content;
+use Victorybiz\GeoIPLocation\GeoIPLocation;
 
 class IndexController extends Controller
 {
@@ -415,12 +416,19 @@ class IndexController extends Controller
 
         $mail = new Mail($from, $subject, $to, $content);
 
+        $geoip = new GeoIPLocation();
+        $location = $geoip->getCountry();
+
+        if (!is_null($city = $geoip->getCity())) {
+            $location = $city . ', ' . $location;
+        }
+
         /**
          * @see https://github.com/sendgrid/sendgrid-php/blob/master/USE_CASES.md#transactional-templates
          */
         $mail->setTemplateId('19a3677a-1359-41de-859a-5228450c3b29');
         $mail->personalization[0]->addSubstitution("-username-", $username);
-        $mail->personalization[0]->addSubstitution("-location-", 'Shanghai, China');
+        $mail->personalization[0]->addSubstitution("-location-", $location);
         $mail->personalization[0]->addSubstitution("-link-", $link);
 
         $sg = new SendGrid(config('app.sendgrid_api_key'));
