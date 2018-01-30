@@ -87,7 +87,7 @@ class IndexController extends Controller
         }
 
         $user = User::newOrUpdateGoogleUser($payload['sub'], $payload['email'], $payload['name'],
-            $payload['given_name'], $payload['family_name'], $payload['picture'], $request->getClientIp());
+            $payload['given_name'], $payload['family_name'], $payload['picture']);
 
         if (false === $user) {
             return Output::error(trans('common.server_is_busy'), 10102, [], Response::HTTP_INTERNAL_SERVER_ERROR);

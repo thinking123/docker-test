@@ -25,7 +25,7 @@ class User extends Base
         try {
             DB::beginTransaction();
 
-            $user = User::where('googleId', $googleId)->first();
+            $user = User::where('email', $email)->first();
 
             if (!is_null($user)) {
                 $user->avatar = $avatar;
