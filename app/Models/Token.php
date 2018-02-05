@@ -4,6 +4,7 @@ namespace App\Models;
 
 use DB;
 use Log;
+use Victorybiz\GeoIPLocation\GeoIPLocation;
 
 class Token extends Base
 {
@@ -70,11 +71,31 @@ class Token extends Base
             throw new \Exception(trans('common.token_limit_reached'));
         }
 
+        $geoip = new GeoIPLocation();
+        $geoip->setIP($ip);
+
+        $latitude = $geoip->getLatitude();
+        $longitude = $geoip->getLongitude();
+
+        $timezone = null;
+        if (!is_null($latitude) && !is_null($longitude)) {
+            $timezoneObject = new \GoogleMapsTimeZone($latitude, $longitude, time(), \GoogleMapsTimeZone::FORMAT_JSON);
+            $timezoneObject->setApiKey(config('app.google_map_time_zone_api_key'));
+            $timezoneData = $timezoneObject->queryTimeZone();
+
+            if (isset($timezoneData['status']) && 'OK' === $timezoneData['status']) {
+                $timezone = $timezoneData['timeZoneId'];
+            }
+        }
+
         $token = new static;
 
         $token->userId = $userId;
         $token->agent = trim($agent);
         $token->ip = $ip;
+        $token->city = $geoip->getCity();
+        $token->country = $geoip->getCountry();
+        $token->timezone = $timezone;
         $token->refreshToken = static::genRefreshToken($userId, $salt);
         $token->accessToken = sha1($userId . uniqid() . $salt . $token->refreshToken);
         $token->createdAt = $token->updatedAt = date('Y-m-d H:i:s');

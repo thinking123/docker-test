@@ -46,12 +46,25 @@ class UserController extends Controller
 
         foreach ($tokens as $token) {
             $list[] = [
-                'agent'     => $token->agent,
-                'ip'        => $token->ip,
-                'token'     => $token->accessToken,
-                'createdAt' => strtotime($token->createdAt),
-                'expiredAt' => strtotime($token->accessTokenExpiredAt)
+                'agent'        => $token->agent,
+                'ip'           => $token->ip,
+                'city'         => $token->city,
+                'country'      => $token->country,
+                'timezone'     => $token->timezone,
+                'token'        => $token->accessToken,
+                'createdAt'    => strtotime($token->createdAt),
+                'expiredAt'    => strtotime($token->accessTokenExpiredAt),
+                'lastAccessAt' => strtotime($token->updatedAt)
             ];
+        }
+
+        foreach ($list as & $item) {
+            if (!is_null($item['timezone'])) {
+                date_default_timezone_set($token['timezone']);
+                $item['lastAccessLocalTime'] = date('Y-m-d H:i:s', $item['lastAccessAt']);
+            } else {
+                $item['lastAccessLocalTime'] = null;
+            }
         }
 
         return Output::ok([

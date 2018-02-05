@@ -11,7 +11,7 @@
  Target Server Version : 50714
  File Encoding         : utf-8
 
- Date: 01/30/2018 17:55:34 PM
+ Date: 02/05/2018 18:53:42 PM
 */
 
 SET NAMES utf8mb4;
@@ -34,7 +34,7 @@ CREATE TABLE `Component` (
   PRIMARY KEY (`id`),
   KEY `idx_userId` (`userId`),
   KEY `idx_teamId` (`teamId`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `DesignToken`
@@ -68,7 +68,7 @@ CREATE TABLE `File` (
   PRIMARY KEY (`id`),
   KEY `idx_userId` (`userId`),
   KEY `idx_teamId` (`teamId`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `FileComponent`
@@ -107,7 +107,7 @@ CREATE TABLE `Layer` (
   UNIQUE KEY `uniq_parentId_position` (`parentId`,`position`,`fileId`,`componentId`) USING BTREE,
   KEY `idx_fileId` (`fileId`),
   KEY `idx_componentId` (`componentId`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `Team`
@@ -150,6 +150,9 @@ CREATE TABLE `Token` (
   `userId` int(11) unsigned NOT NULL COMMENT '用户ID',
   `agent` varchar(250) DEFAULT NULL COMMENT '客户端 Agent',
   `ip` varchar(40) NOT NULL COMMENT 'IP 地址',
+  `city` varchar(100) DEFAULT NULL COMMENT '所在城市',
+  `country` varchar(100) DEFAULT NULL COMMENT '所在国家',
+  `timezone` varchar(100) DEFAULT NULL COMMENT '所处时区',
   `accessToken` varchar(40) DEFAULT NULL COMMENT 'access token',
   `refreshToken` varchar(40) NOT NULL COMMENT 'refresh token',
   `accessTokenExpiredAt` timestamp NULL DEFAULT NULL,
@@ -161,7 +164,7 @@ CREATE TABLE `Token` (
   UNIQUE KEY `uniq_refreshToken` (`refreshToken`) USING HASH,
   UNIQUE KEY `uniq_accessToken` (`accessToken`) USING HASH,
   KEY `idx_userId` (`userId`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `User`
@@ -180,6 +183,6 @@ CREATE TABLE `User` (
   `updatedAt` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;

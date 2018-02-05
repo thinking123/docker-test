@@ -63,4 +63,14 @@ return [
     |
     */
     'sendgrid_api_key' => env('SENDGRID_API_KEY', ''),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Google Maps Time Zone API Key
+    |--------------------------------------------------------------------------
+    |
+    | @see https://developers.google.com/maps/documentation/timezone/start
+    |
+    */
+    'google_map_time_zone_api_key' => env('GOOGLE_MAP_TIME_ZONE_API_KEY', ''),
 ];

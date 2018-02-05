@@ -16,7 +16,8 @@
     "barryvdh/laravel-cors": "0.10.*",
     "illuminate/redis": "~5.5",
     "sendgrid/sendgrid": "~6.0",
-    "victorybiz/geoip-location": "~1.0"
+    "victorybiz/geoip-location": "~1.0",
+    "imelgrat/google-time-zone": "*"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",
