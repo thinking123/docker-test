@@ -73,4 +73,14 @@ return [
     |
     */
     'google_map_time_zone_api_key' => env('GOOGLE_MAP_TIME_ZONE_API_KEY', ''),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Google Fonts API Key
+    |--------------------------------------------------------------------------
+    |
+    | @see https://developers.google.com/fonts/docs/developer_api
+    |
+    */
+    'google_fonts_api_key' => env('GOOGLE_FONTS_API_KEY', ''),
 ];

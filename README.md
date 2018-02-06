@@ -71,10 +71,11 @@
 |  | |  | source: required| 固定值 'quick' |
 |  | |  | email: required| 通过接口 31 取得的链接，其 query string 中的 email |
 |  | |  | token: required| 通过接口 31 取得的链接，其 query string 中的 token |
+| 33. 字体列表 | GET | /fonts |  | 该接口用于获取字体列表。不需要用户认证。 |
 
 ### 认证方法
 
-1. 接口 1 ~ 4 不需要认证；
+1. 接口 1 ~ 4, 33 不需要认证；
 2. 认证方法：请求头添加 "Authorization: Bearer {accessToken}" 
 
 ### 参数格式

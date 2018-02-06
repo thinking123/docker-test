@@ -82,5 +82,7 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
         $router->put('/designToken/{id}', 'DesignTokenController@updateDesignToken');
 
         $router->delete('/designToken/{id}', 'DesignTokenController@deleteDesignToken');
+
+        $router->get('/fonts', 'IndexController@getFontList');
     });
 });

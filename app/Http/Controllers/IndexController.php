@@ -516,4 +516,40 @@ class IndexController extends Controller
 
         return Output::ok($data);
     }
+
+    /**
+     * Google fonts
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getFontList(Request $request)
+    {
+        $key = 'google_fonts:all2';
+
+        $fonts = Redis::get($key);
+
+        if (!is_null($fonts)) {
+            $fonts = json_decode($fonts, true);
+            return Output::ok($fonts);
+        }
+
+        $url = 'https://www.googleapis.com/webfonts/v1/webfonts?sort=alpha&key=' . config('app.google_fonts_api_key');
+
+        try {
+            $fonts = @file_get_contents($url);
+            $fonts = @json_decode($fonts, true);
+
+            if (!is_array($fonts) || empty($fonts)) {
+                throw new \Exception(trans('common.server_is_busy'));
+            }
+
+            Redis::set($key, json_encode($fonts));
+        } catch (\Exception $e) {
+            static::log($e);
+            return Output::error(trans('common.server_is_busy'), 10800, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return Output::ok($fonts);
+    }
 }
