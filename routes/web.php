@@ -23,6 +23,8 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
 
     $router->post('/quick', 'IndexController@createQuickLink');
 
+    $router->get('/fonts', 'IndexController@getFontList');
+
     $router->group(['middleware' => ['auth']], function () use ($router) {
 
         $router->put('/token', 'IndexController@refreshAccessToken');
@@ -82,7 +84,5 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
         $router->put('/designToken/{id}', 'DesignTokenController@updateDesignToken');
 
         $router->delete('/designToken/{id}', 'DesignTokenController@deleteDesignToken');
-
-        $router->get('/fonts', 'IndexController@getFontList');
     });
 });
