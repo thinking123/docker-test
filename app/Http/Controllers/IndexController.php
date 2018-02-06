@@ -525,7 +525,7 @@ class IndexController extends Controller
      */
     public function getFontList(Request $request)
     {
-        $key = 'google_fonts:all2';
+        $key = 'google_fonts:all';
 
         $fonts = Redis::get($key);
 
@@ -544,7 +544,7 @@ class IndexController extends Controller
                 throw new \Exception(trans('common.server_is_busy'));
             }
 
-            Redis::set($key, json_encode($fonts));
+            Redis::setex($key, 3600, json_encode($fonts));
         } catch (\Exception $e) {
             static::log($e);
             return Output::error(trans('common.server_is_busy'), 10800, [], Response::HTTP_INTERNAL_SERVER_ERROR);
