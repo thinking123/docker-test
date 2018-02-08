@@ -562,10 +562,12 @@ class IndexController extends Controller
 
         $storage = new StorageClient($config);
 
-        $buckets = $storage->buckets();
+        $buckets = [];
 
-        foreach ($buckets as $bucket) {
-            echo $bucket->name() . PHP_EOL;
+        foreach ($storage->buckets() as $bucket) {
+            array_push($buckets, $bucket->name());
         }
+
+        return Output::ok(['buckets' => $buckets]);
     }
 }
