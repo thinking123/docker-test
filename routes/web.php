@@ -25,8 +25,6 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
 
     $router->get('/fonts', 'IndexController@getFontList');
 
-    $router->get('/buckets', 'IndexController@getGoogleCloudStorageBuckets');
-
     $router->group(['middleware' => ['auth']], function () use ($router) {
 
         $router->put('/token', 'IndexController@refreshAccessToken');
@@ -86,5 +84,7 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
         $router->put('/designToken/{id}', 'DesignTokenController@updateDesignToken');
 
         $router->delete('/designToken/{id}', 'DesignTokenController@deleteDesignToken');
+
+        $router->get('/buckets', 'IndexController@getGoogleCloudStorageBuckets');
     });
 });

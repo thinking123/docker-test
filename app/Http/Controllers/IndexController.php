@@ -554,18 +554,28 @@ class IndexController extends Controller
         return Output::ok($fonts);
     }
 
+    /**
+     * Google Cloud Buckets List
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getGoogleCloudStorageBuckets()
     {
-        $config = [
-            'keyFilePath' => config('app.google_cloud_storage_credential_file')
-        ];
+        try {
+            $config = [
+                'keyFilePath' => config('app.google_cloud_storage_credential_file1')
+            ];
 
-        $storage = new StorageClient($config);
+            $storage = new StorageClient($config);
 
-        $buckets = [];
+            $buckets = [];
 
-        foreach ($storage->buckets() as $bucket) {
-            array_push($buckets, $bucket->name());
+            foreach ($storage->buckets() as $bucket) {
+                array_push($buckets, $bucket->name());
+            }
+        } catch (\Exception $e) {
+            static::log($e);
+            return Output::error(trans('common.server_is_busy'), 10900, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return Output::ok(['buckets' => $buckets]);
