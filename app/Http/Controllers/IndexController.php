@@ -14,6 +14,7 @@ use SendGrid\Mail;
 use SendGrid\Email;
 use SendGrid\Content;
 use Victorybiz\GeoIPLocation\GeoIPLocation;
+use Google\Cloud\Storage\StorageClient;
 
 class IndexController extends Controller
 {
@@ -551,5 +552,20 @@ class IndexController extends Controller
         }
 
         return Output::ok($fonts);
+    }
+
+    public function getGoogleCloudStorageBuckets()
+    {
+        $config = [
+            'keyFilePath' => config('app.google_cloud_storage_credential_file')
+        ];
+
+        $storage = new StorageClient($config);
+
+        $buckets = $storage->buckets();
+
+        foreach ($buckets as $bucket) {
+            echo $bucket->name() . PHP_EOL;
+        }
     }
 }

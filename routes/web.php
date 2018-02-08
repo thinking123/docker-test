@@ -25,6 +25,8 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
 
     $router->get('/fonts', 'IndexController@getFontList');
 
+    $router->get('/buckets', 'IndexController@getGoogleCloudStorageBuckets');
+
     $router->group(['middleware' => ['auth']], function () use ($router) {
 
         $router->put('/token', 'IndexController@refreshAccessToken');

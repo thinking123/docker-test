@@ -83,4 +83,16 @@ return [
     |
     */
     'google_fonts_api_key' => env('GOOGLE_FONTS_API_KEY', ''),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Google Cloud Storage Credential File
+    |--------------------------------------------------------------------------
+    |
+    | The full path to your service account credentials .json file retrieved from the Google Developers Console.
+    |
+    | @see https://developers.google.com/fonts/docs/developer_api
+    |
+    */
+    'google_cloud_storage_credential_file' => env('GOOGLE_CLOUD_STORAGE_CREDENTIAL_FILE', ''),
 ];
