@@ -14,7 +14,6 @@ use SendGrid\Mail;
 use SendGrid\Email;
 use SendGrid\Content;
 use Victorybiz\GeoIPLocation\GeoIPLocation;
-use Google\Cloud\Storage\StorageClient;
 
 class IndexController extends Controller
 {

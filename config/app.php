@@ -95,4 +95,11 @@ return [
     |
     */
     'google_cloud_storage_credential_file' => env('GOOGLE_CLOUD_STORAGE_CREDENTIAL_FILE', ''),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Google Cloud Storage Bucket Name
+    |--------------------------------------------------------------------------
+    */
+    'google_cloud_storage_bucket_name' => env('GOOGLE_CLOUD_STORAGE_BUCKET_NAME', ''),
 ];
