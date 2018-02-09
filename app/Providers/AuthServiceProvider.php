@@ -35,7 +35,7 @@ class AuthServiceProvider extends ServiceProvider
 
             if (0 === strpos($accessToken, 'Bearer ')) {
 
-                $accessToken = substr($accessToken, 7);
+                $accessToken = $request->bearerToken();
 
                 if (!empty($accessToken)) {
                     return Token::getUserByAccessToken($accessToken);
