@@ -25,4 +25,6 @@ return [
     'invalid_design_token_name' => 'Invalid design token name',
     'design_token_not_found'    => 'Design token not found',
     'quick_login_link_expired'  => 'This login verification has expired',
+    'content_design_token_name' => 'Invalid content token name',
+    'content_token_not_found'   => 'Content token not found',
 ];

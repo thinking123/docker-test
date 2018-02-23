@@ -73,6 +73,16 @@
 |  | |  | token: required| 通过接口 31 取得的链接，其 query string 中的 token |
 | 33. 字体列表 | GET | /fonts |  | 该接口用于获取字体列表。不需要用户认证。 |
 | 34. 文件上传 | POST | /storage/write |  | 该接口用于上传文件。该 HTTP 请求的 entity-body 为文件的二进制内容。此外, 需要增加 Content-Type 请求头, 用于声明文件的 MIME 类型。错误的类型声明将会导致文件无法被浏览器正常解析 |
+| 35. 创建文件的 Content Token | POST | /file/{id}/contentToken| | 该接口用于创建文件相关的 content token |
+|  |  | | name:optional | 名称, 默认 Untitled |
+|  |  | | value:optional | 值, 默认为空字符串 |
+| 36. 查询文件相关 Content Token 列表 | GET | /file/{id}/contentTokens | | 该接口用于查询文件相关 content token 列表 |
+|  |  | | offset:optional | 偏移位置, 默认 0 |
+|  |  | | limit:optional | 最大限量, 默认 10 |
+| 37. 更新 Content Token | PUT | /contentToken/{id} | | 该接口用于更新 content token |
+|  |  | | name:optional | 名称, 默认 Untitled |
+|  |  | | value:optional | 值, 默认为空字符串 |
+| 38. 删除 Content Token | DELETE | /contentToken/{id}|  | 该接口用于删除 content Token |
 
 ### 认证方法
 

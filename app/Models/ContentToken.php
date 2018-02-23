@@ -5,14 +5,14 @@ namespace App\Models;
 use DB;
 use Log;
 
-class DesignToken extends Base
+class ContentToken extends Base
 {
     const STATUS_DELETED = '0';
     const STATUS_NORMAL = '1';
 
     const DEFAULT_PAGE_SIZE = 10;
 
-    protected $table = 'DesignToken';
+    protected $table = 'ContentToken';
 
     public function creator()
     {
@@ -20,14 +20,14 @@ class DesignToken extends Base
     }
 
     /**
-     * 获取文件所属的 Design Token 列表
+     * 获取文件所属的 Content Token 列表
      *
      * @param $id
      * @param $offset
      * @param $limit
      * @return array
      */
-    public static function getFileDesignTokens($id, $offset, $limit = DesignToken::DEFAULT_PAGE_SIZE)
+    public static function getFileTokens($id, $offset, $limit = ContentToken::DEFAULT_PAGE_SIZE)
     {
         $builder = static::with('creator')->where('fileId', $id)->where('status', static::STATUS_NORMAL);
 
@@ -43,7 +43,7 @@ class DesignToken extends Base
     }
 
     /**
-     * 格式化 Design Token
+     * 格式化 Content Token
      *
      * @param DesignToken $dt
      */
@@ -65,7 +65,7 @@ class DesignToken extends Base
     }
 
     /**
-     * 格式化 Design Token 数组
+     * 格式化 Content Token 数组
      *
      * @param array $tokens
      */

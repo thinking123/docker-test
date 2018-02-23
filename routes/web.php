@@ -86,5 +86,13 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
         $router->delete('/designToken/{id}', 'DesignTokenController@deleteDesignToken');
 
         $router->post('/storage/write', 'StorageController@write');
+
+        $router->post('/file/{id}/contentToken', 'ContentTokenController@createToken');
+
+        $router->get('/file/{id}/contentTokens', 'ContentTokenController@getContentTokens');
+
+        $router->put('/contentToken/{id}', 'ContentTokenController@updateToken');
+
+        $router->delete('/contentToken/{id}', 'ContentTokenController@deleteToken');
     });
 });

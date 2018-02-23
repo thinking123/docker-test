@@ -6,6 +6,7 @@ use App\Models\DesignToken;
 use Output;
 use Log;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 use App\Models\File;
 
 class DesignTokenController extends Controller
