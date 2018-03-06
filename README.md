@@ -66,7 +66,7 @@
 |  |  | | value:optional | 值, 默认为空字符串 |
 | 30. 删除 Design Token | DELETE | /designToken/{id}|  | 该接口用于删除 Design Token |
 | 31. 请求快速登录链接 | POST | /quick |  | 该接口用于获取一个快速登录链接。用户邮箱将收到一个快速登录链接。 |
-|  |  |  | email:optional | 用户快速登录的用户的邮箱地址 |
+|  |  |  | email:required | 用户快速登录的用户的邮箱地址 |
 | 32. 快速登录 | POST | /token |  | 该接口用于快速登录。需配合接口 31 使用。 |
 |  | |  | source: required| 固定值 'quick' |
 |  | |  | email: required| 通过接口 31 取得的链接，其 query string 中的 email |
