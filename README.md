@@ -83,7 +83,7 @@
 |  |  | | name:optional | 名称, 默认 Untitled |
 |  |  | | value:optional | 值, 默认为空字符串 |
 | 38. 删除 Content Token | DELETE | /contentToken/{id}|  | 该接口用于删除 content Token |
-| 39. 更新 Team | PUT | /team/{id}|  | 该接口用于编辑 Team(只有团队 owner 有此权利) |
+| 39. 更新 Team | PUT | /team/{id}|  | 该接口用于编辑 Team(仅 owner 有此权利) |
 |  |  | | name:required | Team 名称 |
 | 40. 获取 Team 信息 | GET | /team/{id}|  | 该接口用于获取 Team 详细信息 |
 
