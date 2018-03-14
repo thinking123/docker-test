@@ -85,4 +85,47 @@ class Team extends Base
 
         return $team->toArray();
     }
+
+    /**
+     * 格式化
+     *
+     * @param array $team
+     */
+    public static function filter(& $team)
+    {
+        $owner = !isset($team['owner']) || empty($team['owner']) ? null : [
+            'id'     => $team['owner']['id'],
+            'name'   => $team['owner']['name'],
+            'avatar' => $team['owner']['avatar'],
+            'email'  => $team['owner']['email'],
+        ];
+
+        $creator = !isset($team['creator']) || empty($team['creator']) ? null : [
+            'id'     => $team['creator']['id'],
+            'name'   => $team['creator']['name'],
+            'avatar' => $team['creator']['avatar'],
+            'email'  => $team['creator']['email'],
+        ];
+
+        $team = [
+            'id'        => $team['id'],
+            'name'      => $team['name'],
+            'owner'     => $owner,
+            'creator'   => $creator,
+            'createdAt' => strtotime($team['createdAt']),
+            'updatedAt' => is_null($team['updatedAt']) ? null : strtotime($team['updatedAt'])
+        ];
+    }
+
+    /**
+     * 格式化数组
+     *
+     * @param array $teams
+     */
+    public static function filterTokens(& $teams)
+    {
+        foreach ($teams as &$team) {
+            static::filter($team);
+        }
+    }
 }

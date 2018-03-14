@@ -45,7 +45,7 @@ class DesignToken extends Base
     /**
      * 格式化 Design Token
      *
-     * @param DesignToken $dt
+     * @param array $dt
      */
     public static function filter(& $dt)
     {

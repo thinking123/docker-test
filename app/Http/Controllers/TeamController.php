@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Team;
+use App\Models\TeamUser;
 use Output;
 use Log;
 use Illuminate\Http\Request;
@@ -50,28 +51,7 @@ class TeamController extends Controller
             return Output::error(trans('common.server_is_busy'), 40003, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $owner = !isset($team['owner']) || empty($team['owner']) ? null : [
-            'id'     => $team['owner']['id'],
-            'name'   => $team['owner']['name'],
-            'avatar' => $team['owner']['avatar'],
-            'email'  => $team['owner']['email'],
-        ];
-
-        $creator = !isset($team['creator']) || empty($team['creator']) ? null : [
-            'id'     => $team['creator']['id'],
-            'name'   => $team['creator']['name'],
-            'avatar' => $team['creator']['avatar'],
-            'email'  => $team['creator']['email'],
-        ];
-
-        $team = [
-            'id'        => $team['id'],
-            'name'      => $team['name'],
-            'owner'     => $owner,
-            'creator'   => $creator,
-            'createdAt' => strtotime($team['createdAt']),
-            'updatedAt' => is_null($team['updatedAt']) ? null : strtotime($team['updatedAt'])
-        ];
+        Team::filter($team);
 
         return Output::ok($team);
     }
@@ -122,5 +102,31 @@ class TeamController extends Controller
         }
 
         return Output::error(trans('common.operation_failed'), 40104);
+    }
+
+    /**
+     * 获取一个组的详细信息
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getTeam(Request $request, $id)
+    {
+        $team = Team::getTeam($id);
+
+        if (is_null($team)) {
+            return Output::error(trans('common.team_not_found'), 40200, [], Response::HTTP_NOT_FOUND);
+        }
+
+        if (!isset($team['owner']['id']) || $team['owner']['id'] != $request->user()->id) {
+            if (!TeamUser::checkTeamUser($request->user()->id, $id)) {
+                return Output::error(trans('common.team_not_found'), 40201, [], Response::HTTP_NOT_FOUND);
+            }
+        }
+
+        Team::filter($team);
+
+        return Output::ok($team);
     }
 }
