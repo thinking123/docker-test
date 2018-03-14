@@ -85,6 +85,8 @@
 | 38. 删除 Content Token | DELETE | /contentToken/{id}|  | 该接口用于删除 content Token |
 | 39. 更新 Team | PUT | /team/{id}|  | 该接口用于编辑 Team |
 |  |  | | name:required | Team 名称 |
+| 40. 获取 Team 信息 | GET | /team/{id}|  | 该接口用于获取 Team 详细信息 |
+
 
 ### 认证方法
 
