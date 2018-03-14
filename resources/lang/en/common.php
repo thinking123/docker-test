@@ -27,4 +27,6 @@ return [
     'quick_login_link_expired'  => 'This login verification has expired',
     'content_design_token_name' => 'Invalid content token name',
     'content_token_not_found'   => 'Content token not found',
+    'team_not_found'            => 'Team not found',
+    'team_not_found'            => 'Team not found',
 ];
