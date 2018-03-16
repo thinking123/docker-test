@@ -122,7 +122,7 @@ class Team extends Base
      *
      * @param array $teams
      */
-    public static function filterTokens(& $teams)
+    public static function filterTeams(& $teams)
     {
         foreach ($teams as &$team) {
             static::filter($team);
