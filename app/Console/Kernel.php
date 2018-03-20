@@ -14,7 +14,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\AddIcon::class
+        Commands\AddIcon::class,
+        Commands\AddGoogleIcon::class
     ];
 
     /**
