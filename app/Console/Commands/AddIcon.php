@@ -113,7 +113,7 @@ class AddIcon extends Command
             $url = 'https://storage.googleapis.com/' . $info['bucket'] . '/' . $info['name'];
             $this->info(' Upload file success: ' . $url);
 
-            
+            $this->saveIcon($libId, $path, $url);
         } catch (\Exception $e) {
             static::log($e);
             $this->error(' Upload file failed: ' . $path);
@@ -145,5 +145,34 @@ class AddIcon extends Command
         }
 
         return $lib->id;
+    }
+
+    /**
+     * 保存 icon
+     *
+     * @param $libId
+     * @param $path
+     * @param $url
+     */
+    public function saveIcon($libId, $path, $url)
+    {
+        $name = pathinfo($path);
+
+        $icon = Icon::where('iconLibId', $libId)->where('status', Icon::STATUS_NORMAL)->where('name',
+            $name['filename'])->first();
+
+        if (is_null($icon)) {
+            $icon = new Icon();
+
+            $icon->name = $name['filename'];
+            $icon->tags = '[]';
+            $icon->path = $url;
+            $icon->iconLibId = $libId;
+            $icon->status = Icon::STATUS_NORMAL;
+            $icon->createdBy = 0;
+            $icon->createdAt = $icon->updatedAt = date('Y-m-d H:i:s');
+
+            $icon->save();
+        }
     }
 }
