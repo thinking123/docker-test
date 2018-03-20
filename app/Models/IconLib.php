@@ -28,8 +28,6 @@ class IconLib extends Base
      */
     public static function getIconLibs($userId, $accountId = 0)
     {
-
-
         if ($userId) {
             $builder = static::where(function ($builder) use ($userId) {
                 $builder->where('accountId', 0)->orWhere(function ($builder) use ($userId) {
