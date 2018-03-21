@@ -106,5 +106,7 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
         $router->put('/iconLib/{id:[0-9]+}', 'IconController@updateIconLib');
 
         $router->delete('/iconLib/{id:[0-9]+}', 'IconController@deleteIconLib');
+
+        $router->post('/iconLib/{id:[0-9]+}/icon', 'IconController@createIcon');
     });
 });

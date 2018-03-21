@@ -43,4 +43,16 @@ class Icon extends Base
             static::filter($icon);
         }
     }
+
+    /**
+     * 获取合法的存储 host
+     *
+     * @return array
+     */
+    public static function getAllowedHost()
+    {
+        return [
+            'storage.googleapis.com'
+        ];
+    }
 }

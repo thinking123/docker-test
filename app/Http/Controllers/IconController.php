@@ -81,7 +81,7 @@ class IconController extends Controller
      *
      * @param Request $request
      * @param int $id
-     * @return mixed
+     * @return \Illuminate\Http\JsonResponse
      */
     public function updateIconLib(Request $request, $id)
     {
@@ -127,7 +127,7 @@ class IconController extends Controller
      *
      * @param Request $request
      * @param int $id
-     * @return mixed
+     * @return \Illuminate\Http\JsonResponse
      */
     public function deleteIconLib(Request $request, $id)
     {
@@ -156,5 +156,63 @@ class IconController extends Controller
         }
 
         return Output::error(trans('common.server_is_busy'), 120302, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * 创建新 icon
+     *
+     * @param Request $request
+     * @param int $libId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function createIcon(Request $request, $libId)
+    {
+        $name = $request->input('name', '');
+        $tags = $request->input('tags', '');
+        $path = $request->input('path', '');
+
+        if ('' === $name) {
+            return Output::error(trans('common.invalid_icon_lib_name'), 120400);
+        }
+
+        $tags = @json_decode($tags, true);
+        $tags = is_null($tags) ? [] : $tags;
+        $tags = json_encode($tags);
+
+        $pieces = parse_url($path);
+        if (!isset($pieces['host']) || !in_array($pieces['host'], Icon::getAllowedHost())) {
+            return Output::error(trans('common.invalid_icon_lib_path'), 120401);
+        }
+
+        $userId = $request->user()->id;
+
+        $lib = IconLib::getIconLib($libId, $userId);
+
+        if (is_null($lib) || $lib['status'] != IconLib::STATUS_NORMAL || $lib['accountId'] != $userId || $lib['accountType'] != IconLib::ACCOUNT_TYPE_PERSONAL) {
+            return Output::error(trans('common.icon_lib_not_found'), 120402, [], Response::HTTP_NOT_FOUND);
+        }
+
+        $another = Icon::where('iconLibId', $libId)->where('name', $name)->where('status',
+            Icon::STATUS_NORMAL)->first();
+
+        if (!is_null($another)) {
+            return Output::error(trans('common.icon_with_same_name_exists'), 120403);
+        }
+
+        $icon = new Icon();
+
+        $icon->name = $name;
+        $icon->tags = $tags;
+        $icon->path = $path;
+        $icon->iconLibId = $libId;
+        $icon->status = Icon::STATUS_NORMAL;
+        $icon->createdBy = $userId;
+        $icon->createdAt = $icon->updatedAt = date('Y-m-d H:i:s');
+
+        if ($icon->save()) {
+            return Output::ok();
+        }
+
+        return Output::error(trans('common.server_is_busy'), 120404, [], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
