@@ -91,6 +91,7 @@
 |  |  | | name:required | icon lib 的名称 |
 | 43. 更新一个属于个人账户的 icon lib | PUT | /iconLib/{id} |  | 该接口用于更新一个属于个人账户的 icon lib |
 |  |  | | name:required | icon lib 的名称 |
+| 44. 删除一个属于个人账户的 icon lib | DELETE | /iconLib/{id} |  | 该接口用于删除一个属于个人账户的 icon lib |
 
 
 ### 认证方法

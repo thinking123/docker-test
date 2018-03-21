@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Icon;
 use App\Models\IconLib;
 use Output;
 use Log;
@@ -119,5 +120,41 @@ class IconController extends Controller
         IconLib::filter($lib);
 
         return Output::ok($lib);
+    }
+
+    /**
+     * 删除 icon lib
+     *
+     * @param Request $request
+     * @param int $id
+     * @return mixed
+     */
+    public function deleteIconLib(Request $request, $id)
+    {
+        $userId = $request->user()->id;
+
+        $lib = IconLib::getIconLib($id, $userId);
+
+        if (is_null($lib) || $lib['status'] != IconLib::STATUS_NORMAL || $lib['accountId'] != $userId || $lib['accountType'] != IconLib::ACCOUNT_TYPE_PERSONAL) {
+            return Output::error(trans('common.icon_lib_not_found'), 120300, [], Response::HTTP_NOT_FOUND);
+        }
+
+        if (isset($lib['icons']) && !empty($lib['icons'])) {
+            return Output::error(trans('common.icons_exist_in_lib'), 120301);
+        }
+
+        $data = [
+            'status'    => IconLib::STATUS_DELETED,
+            'updatedAt' => date('Y-m-d H:i:s')
+        ];
+
+        $result = IconLib::where('id', $id)->where('accountId', $userId)->where('accountType',
+            IconLib::ACCOUNT_TYPE_PERSONAL)->where('status', IconLib::STATUS_NORMAL)->update($data);
+
+        if ($result) {
+            return Output::ok();
+        }
+
+        return Output::error(trans('common.server_is_busy'), 120302, [], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }

@@ -31,4 +31,5 @@ return [
     'team_not_found'                 => 'Team not found',
     'icon_lib_not_found'             => 'Icon lib not found',
     'icon_lib_with_same_name_exists' => 'A icon lib with the same name already exists',
+    'icons_exist_in_lib'             => 'There are still some icons in the lib',
 ];
