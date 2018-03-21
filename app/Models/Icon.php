@@ -14,7 +14,7 @@ class Icon extends Base
 
     public function iconLib()
     {
-        return $this->belongsTo('App\Models\IconLib', 'id', 'iconLibId');
+        return $this->belongsTo('App\Models\IconLib', 'iconLibId', 'id')->where('status', IconLib::STATUS_NORMAL);
     }
 
     /**

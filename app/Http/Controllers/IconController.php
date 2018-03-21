@@ -215,4 +215,63 @@ class IconController extends Controller
 
         return Output::error(trans('common.server_is_busy'), 120404, [], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
+
+    /**
+     * 更新 icon
+     *
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateIcon(Request $request, $id)
+    {
+        $name = $request->input('name', '');
+        $tags = $request->input('tags', '');
+        $path = $request->input('path', '');
+
+        if ('' === $name) {
+            return Output::error(trans('common.invalid_icon_lib_name'), 120500);
+        }
+
+        $tags = @json_decode($tags, true);
+        $tags = is_null($tags) ? [] : $tags;
+        $tags = json_encode($tags);
+
+        $pieces = parse_url($path);
+        if (!isset($pieces['host']) || !in_array($pieces['host'], Icon::getAllowedHost())) {
+            return Output::error(trans('common.invalid_icon_lib_path'), 120501);
+        }
+
+        $icon = Icon::where('id', $id)->where('status', Icon::STATUS_NORMAL)->with('iconLib')->first();
+
+        if (is_null($icon) || is_null($icon->iconLib)) {
+            return Output::error(trans('common.icon_not_found'), 120502, [], Response::HTTP_NOT_FOUND);
+        }
+
+        $lib = $icon->iconLib;
+
+        $userId = $request->user()->id;
+
+        if ($lib->accountId != $userId || $lib->accountType != IconLib::ACCOUNT_TYPE_PERSONAL) {
+            return Output::error(trans('common.icon_not_found'), 120503, [], Response::HTTP_NOT_FOUND);
+        }
+
+        $another = Icon::where('iconLibId', $lib->id)->where('id', '!=', $id)->where('name', $name)->where('status',
+            Icon::STATUS_NORMAL)->first();
+
+        if (!is_null($another)) {
+            return Output::error(trans('common.icon_with_same_name_exists'), 120504);
+        }
+
+        $icon->name = $name;
+        $icon->tags = $tags;
+        $icon->path = $path;
+        $icon->updatedAt = date('Y-m-d H:i:s');
+
+        if ($icon->save()) {
+            return Output::ok();
+        }
+
+        return Output::error(trans('common.server_is_busy'), 120505, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
 }

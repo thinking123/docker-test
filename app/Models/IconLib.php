@@ -16,7 +16,7 @@ class IconLib extends Base
 
     public function icons()
     {
-        return $this->hasMany('App\Models\Icon', 'iconLibId', 'id')->where('status', '1');
+        return $this->hasMany('App\Models\Icon', 'iconLibId', 'id')->where('status', Icon::STATUS_NORMAL);
     }
 
     /**

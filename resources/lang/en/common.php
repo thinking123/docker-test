@@ -30,6 +30,7 @@ return [
     'content_token_not_found'        => 'Content token not found',
     'team_not_found'                 => 'Team not found',
     'icon_lib_not_found'             => 'Icon lib not found',
+    'icon_not_found'                 => 'Icon not found',
     'icon_lib_with_same_name_exists' => 'A icon lib with the same name already exists',
     'icons_exist_in_lib'             => 'There are still some icons in the lib',
     'invalid_icon_lib_path'          => 'Invalid icon path',
