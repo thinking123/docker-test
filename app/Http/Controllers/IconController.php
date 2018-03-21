@@ -274,4 +274,36 @@ class IconController extends Controller
 
         return Output::error(trans('common.server_is_busy'), 120505, [], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
+
+    /**
+     * 删除 icon
+     *
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteIcon(Request $request, $id)
+    {
+        $icon = Icon::where('id', $id)->where('status', Icon::STATUS_NORMAL)->with('iconLib')->first();
+
+        if (is_null($icon) || is_null($icon->iconLib)) {
+            return Output::error(trans('common.icon_not_found'), 120600, [], Response::HTTP_NOT_FOUND);
+        }
+
+        $lib = $icon->iconLib;
+
+        $userId = $request->user()->id;
+
+        if ($lib->accountId != $userId || $lib->accountType != IconLib::ACCOUNT_TYPE_PERSONAL) {
+            return Output::error(trans('common.icon_not_found'), 120601, [], Response::HTTP_NOT_FOUND);
+        }
+
+        $icon->status = Icon::STATUS_DELETED;
+
+        if ($icon->save()) {
+            return Output::ok();
+        }
+
+        return Output::error(trans('common.server_is_busy'), 120602, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
 }

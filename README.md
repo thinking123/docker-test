@@ -96,10 +96,11 @@
 |  |  | | name:required | icon 的名称 |
 |  |  | | tags:optional | icon 关键字, json 格式. 例如: ["key1", "key2"] |
 |  |  | | path:required | icon 的 URL |
-| 46. 更新一个 icon | POST | /iconLib/{iconLibId}/icon |  | 该接口用于更新 icon |
+| 46. 更新一个 icon | POST | /icon/{id} |  | 该接口用于更新 icon |
 |  |  | | name:required | icon 的名称 |
 |  |  | | tags:optional | icon 关键字, json 格式. 例如: ["key1", "key2"] |
 |  |  | | path:required | icon 的 URL |
+| 47. 删除一个 icon | POST | /icon/{id} |  | 该接口用于删除 icon |
 
 
 ### 认证方法
