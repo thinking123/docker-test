@@ -62,7 +62,7 @@ class StorageController extends Controller
             $url = 'https://storage.googleapis.com/' . $info['bucket'] . '/' . $info['name'];
         } catch (\Exception $e) {
             static::log($e);
-            return Output::error(trans('common.server_is_busy'), 10900, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Output::error(trans('common.server_is_busy'), 110100, [], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return Output::ok([

@@ -50,6 +50,31 @@ class IconLib extends Base
     }
 
     /**
+     * 获取某一 icon lib
+     *
+     * @param int $libId
+     * @param int $userId
+     * @param int $accountId
+     * @return array|null
+     */
+    public static function getIconLib($libId, $userId, $accountId = 0)
+    {
+        $builder = static::where('id', $libId);
+
+        if ($userId) {
+            $builder->where('accountId', $userId)->where('accountType', static::ACCOUNT_TYPE_PERSONAL);
+        } else {
+            $builder->where('accountId', $accountId)->where('accountType', static::ACCOUNT_TYPE_TEAM);
+        }
+
+        $builder->where('status', static::STATUS_NORMAL);
+
+        $lib = $builder->with('icons')->first();
+
+        return is_null($lib) ? null : $lib->toArray();
+    }
+
+    /**
      * 格式化
      *
      * @param array $lib

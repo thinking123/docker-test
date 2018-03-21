@@ -100,5 +100,7 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
         $router->delete('/contentToken/{id}', 'ContentTokenController@deleteToken');
 
         $router->get('/icons', 'IconController@getIcons');
+
+        $router->post('/iconLib', 'IconController@createIconLib');
     });
 });

@@ -87,6 +87,8 @@
 |  |  | | name:required | Team 名称 |
 | 40. 获取 Team 信息 | GET | /team/{id}|  | 该接口用于获取 Team 详细信息 |
 | 41. 获取全部可用 icon 信息 | GET | /icons |  | 该接口用于获取全部可用的 icons |
+| 42. 创建一个属于个人账户的 icon lib | POST | /iconLib |  | 该接口用于创建一个属于个人账户的 icon lib |
+|  |  | | name:required | icon lib 的名称 |
 
 
 ### 认证方法
