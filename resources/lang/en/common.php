@@ -29,6 +29,6 @@ return [
     'content_design_token_name'      => 'Invalid content token name',
     'content_token_not_found'        => 'Content token not found',
     'team_not_found'                 => 'Team not found',
-    'team_not_found'                 => 'Team not found',
+    'icon_lib_not_found'             => 'Icon lib not found',
     'icon_lib_with_same_name_exists' => 'A icon lib with the same name already exists',
 ];
