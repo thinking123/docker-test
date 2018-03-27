@@ -6,6 +6,7 @@ docker build -t api .
 docker run -dit --name api -p 80:80 -p 3306:3306 -p 6379:6379 -v `pwd`:/data/apps/api api /bin/bash
 docker exec -it api mkdir -p /data/apps/api/storage
 docker exec -it api chmod +777 -R /data/apps/api/storage
+docker exec -it -w /data/apps/api api composer install
 docker exec -it api lnmp start
 docker exec -dit api /usr/local/redis/bin/redis-server /etc/redis.conf
 docker exec -it api mysql -uroot -p123456 -e "create database bento_dev"
