@@ -43,5 +43,11 @@
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
-  "optimize-autoloader": true
+  "optimize-autoloader": true,
+  "repositories": {
+    "packagist": {
+      "type": "composer",
+      "url": "https://packagist.phpcomposer.com"
+    }
+  }
 }
