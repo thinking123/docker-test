@@ -137,3 +137,18 @@
   }
 }
 ```
+
+### 容器化开发环境
+
+1. 首次运行
+
+```bash
+docker login --username=fising@aliyun.com --password=bento123456 egistry.cn-shanghai.aliyuncs.com
+docker pull registry.cn-shanghai.aliyuncs.com/bento/api:0.0.4
+```
+
+2. 执行脚本
+
+```bash
+chmod +x run.sh && ./run.sh
+```
