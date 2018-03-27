@@ -143,7 +143,7 @@
 1. 首次运行
 
 ```bash
-docker login --username=fising@aliyun.com --password=bento123456 egistry.cn-shanghai.aliyuncs.com
+docker login --username=fising@aliyun.com --password=bento1234 egistry.cn-shanghai.aliyuncs.com
 docker pull registry.cn-shanghai.aliyuncs.com/bento/api:0.0.4
 ```
 
