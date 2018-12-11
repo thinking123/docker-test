@@ -76,6 +76,7 @@ class IndexController extends Controller
             ], Response::HTTP_BAD_REQUEST);
         }
 
+        //Google Sign-In for Websites  Authenticate with a backend server
         $client = new \Google_Client(['client_id' => config('app.google_client_id')]);
         $payload = $client->verifyIdToken($idToken);
 

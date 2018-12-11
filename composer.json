@@ -16,9 +16,10 @@
     "google/cloud-storage": "~1.3",
     "barryvdh/laravel-cors": "0.10.*",
     "illuminate/redis": "~5.5",
-    "sendgrid/sendgrid": "~6.0",
+    "sendgrid/sendgrid": "~6.0",  
     "victorybiz/geoip-location": "~1.0",
-    "imelgrat/google-time-zone": "*"
+    "imelgrat/google-time-zone": "*",
+    "flipbox/lumen-generator": "^5.6"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",

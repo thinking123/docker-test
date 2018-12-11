@@ -24,12 +24,16 @@ $app = new Laravel\Lumen\Application(
 );
 
 $app->configure('cors');
-
+// If you would like to use the DB facade,
+// you should uncomment the $app->withFacades()
+// call in your  bootstrap/app.php file.
 $app->withFacades(true, [
     'App\Facades\Output'               => 'Output',
     'Illuminate\Support\Facades\Redis' => 'Redis',
 ]);
-
+//If you would like to use the Eloquent ORM,
+// you should uncomment the $app->withEloquent() call in your
+//  bootstrap/app.php file.
 $app->withEloquent();
 
 /*
@@ -70,6 +74,8 @@ $app->singleton(
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
+    //The laravel-cors package allows you to send Cross-Origin
+    // Resource Sharing headers with Laravel middleware configuration.
     'cors' => \Barryvdh\Cors\HandleCors::class,
 ]);
 
@@ -92,6 +98,8 @@ $app->register(Barryvdh\Cors\ServiceProvider::class);
 $app->register(Illuminate\Redis\RedisServiceProvider::class);
 $app->register(Victorybiz\GeoIPLocation\GeoIPLocationServiceProvider::class);
 
+//Do you miss any Laravel code generator on your Lumen project? If yes, then you're in the right place.
+$app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

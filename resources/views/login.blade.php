@@ -7,7 +7,9 @@
 </head>
 <body>
 <div class="g-signin2" data-onsuccess="onSignIn"></div>
-
+<div>
+    this is google login page
+</div>
 <script>
     function onSignIn(googleUser) {
         console.log("Google id_token: " + googleUser.Zi.id_token);
